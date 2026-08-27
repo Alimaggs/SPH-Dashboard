@@ -80,6 +80,38 @@ VENUE_ALIASES = {
     "community room": "St Paul's Nursery School",
 }
 
+# Response headers for the static host. The page is a single self-contained
+# document: no scripts, styles, images or connections come from anywhere but
+# itself, Google Fonts and its own data: URIs, so the policy can deny the rest
+# outright. Inline script and style are unavoidable here (the whole page is one
+# inline block), and neither reads anything a visitor controls.
+#
+# frame-ancestors 'self' blocks other sites from embedding the dashboard. To
+# embed it in beyth.co.uk, add that origin here.
+CSP = (
+    "default-src 'none'; "
+    "script-src 'unsafe-inline'; "
+    "style-src 'unsafe-inline' https://fonts.googleapis.com; "
+    "font-src https://fonts.gstatic.com; "
+    "img-src data:; "
+    "base-uri 'none'; "
+    "form-action 'none'; "
+    "frame-ancestors 'self'"
+)
+
+HEADERS = "\n".join([
+    "/*",
+    "  X-Robots-Tag: noindex, nofollow, noarchive",
+    "  X-Content-Type-Options: nosniff",
+    "  X-Frame-Options: SAMEORIGIN",
+    "  Referrer-Policy: strict-origin-when-cross-origin",
+    "  Permissions-Policy: geolocation=(), camera=(), microphone=(), payment=(), usb=()",
+    "  Strict-Transport-Security: max-age=31536000",
+    f"  Content-Security-Policy: {CSP}",
+    "",
+])
+
+
 MONTHS = ["January", "February", "March", "April", "May", "June",
           "July", "August", "September", "October", "November", "December"]
 
@@ -308,8 +340,7 @@ def build() -> None:
     # page, robots.txt, and an X-Robots-Tag header via Sevalla's _headers file.
     (PUBLIC / "robots.txt").write_text(
         "User-agent: *\nDisallow: /\n", encoding="utf-8")
-    (PUBLIC / "_headers").write_text(
-        "/*\n  X-Robots-Tag: noindex, nofollow, noarchive\n", encoding="utf-8")
+    (PUBLIC / "_headers").write_text(HEADERS, encoding="utf-8")
 
     counted = sum(1 for r in rows if r["counts"])
     size = OUTPUT.stat().st_size / 1024

@@ -89,6 +89,57 @@ git push
 Either way the URL never changes, so a link you have shared with the team keeps
 working.
 
+## Security
+
+The live site is **read-only by construction**. It is one static HTML file: no
+server-side code, no database, no API, no login, no forms, and no upload path.
+Nothing a visitor does can change what anyone else sees — a visitor can edit the
+page in their own browser's dev tools, but that lives only in their tab and is
+gone on refresh.
+
+Verified against the live site:
+
+| Check | Result |
+|---|---|
+| `PUT` / `POST` / `DELETE` / `PATCH` | Return 200 but write nothing — the host serves `index.html` whatever the method. A `PUT` to a new path 404s and creates no resource. |
+| Spreadsheet, source, scripts, README | Not served — all 404. Only `public/` is published. |
+| `/.git/` | Not served. |
+| Directory listing | Not available. |
+| Outbound requests from the page | None. No `fetch`, `XMLHttpRequest`, `WebSocket`, form or cookie. |
+| Browser storage | The light/dark preference only. |
+
+Two consequences worth keeping in mind:
+
+**The GitHub repository is public.** The dashboard is not the exposure — the repo
+is. Anyone can download `Data/2026-2027 SPH Activity Master List.xlsx` in full,
+including the internal notes and the events not yet published on the website.
+Make the repository private if that is not intended; the live site does not
+depend on it being public.
+
+**Anyone with the URL can read the dashboard.** There is no authentication. The
+`noindex` tag and `robots.txt` keep honest crawlers away, but they are requests,
+not access control. If the dashboard genuinely must not be seen by outsiders, it
+needs a login in front of it.
+
+### Response headers
+
+`public/_headers` sets a strict Content-Security-Policy plus `nosniff`,
+`X-Frame-Options`, `Referrer-Policy`, `Permissions-Policy` and HSTS. The policy
+denies everything by default and allows only what this page actually uses: its
+own inline script and style, Google Fonts, and its own `data:` images. It makes
+no network connections at all, so `connect-src` falls through to `none`.
+
+`frame-ancestors 'self'` stops other sites embedding the dashboard. **To embed it
+in beyth.co.uk**, add that origin to the `CSP` value in `scripts/build_dashboard.py`
+and rebuild.
+
+Inline script and style are allowed, because the whole page is one inline block.
+That is safe here for a specific reason: no value a visitor controls — URL,
+search box, or otherwise — is ever written into the page as markup. Spreadsheet
+text is HTML-escaped everywhere it is rendered, and the Website URL column is
+restricted to `http`/`https`, so a `javascript:` value typed into the workbook
+cannot become a clickable link.
+
 ## Keeping it out of search results
 
 The dashboard is not meant to be found by the public. Three measures ship with

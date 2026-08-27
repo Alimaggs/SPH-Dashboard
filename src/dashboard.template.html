@@ -252,11 +252,28 @@ a { color: var(--brand-ink); }
 
 .rail-head {
   display: flex;
-  align-items: baseline;
-  justify-content: space-between;
+  align-items: center;
   gap: 8px;
   padding-bottom: 8px;
 }
+.rail-head .eyebrow { margin-right: auto; }
+
+.rail-close {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  flex: none;
+  border: 1px solid var(--line);
+  border-radius: 7px;
+  background: var(--surface);
+  color: var(--muted);
+  font-size: 17px;
+  line-height: 1;
+  cursor: pointer;
+}
+.rail-close:hover { color: var(--ink); border-color: var(--brand-mid); }
 
 .facet { border-top: 1px solid var(--line-soft); padding: 12px 0 4px; }
 .facet:first-of-type { border-top: 0; }
@@ -738,17 +755,27 @@ td.t-dim { color: var(--muted); }
 @media (max-width: 1080px) {
   .shell { grid-template-columns: minmax(0, 1fr); }
   .rail-toggle { display: inline-flex; }
+  .rail-close { display: inline-flex; }
+
+  /* A drawer, not an inline block. Inline, the rail opened below every result
+     row - roughly 21,000px down on a phone - so the button looked dead. It is
+     also taller than a phone screen, so it needs to scroll independently. */
   .rail {
-    position: static;
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    width: min(330px, 88vw);
+    z-index: 62;
     max-height: none;
-    order: 2;
+    overflow-y: auto;
     background: var(--surface);
-    border: 1px solid var(--line);
-    border-radius: var(--radius);
-    padding: 14px 16px;
+    border-right: 1px solid var(--line);
+    border-radius: 0;
+    box-shadow: var(--shadow-lift);
+    padding: 16px 16px 32px;
   }
   .rail[hidden] { display: none; }
-  .main { order: 1; }
   thead th { top: 0; }
 }
 
@@ -815,10 +842,11 @@ td.t-dim { color: var(--muted); }
 </header>
 
 <div class="shell">
-  <aside class="rail" id="rail" aria-label="Filters">
+  <aside class="rail" id="rail" aria-label="Filters" tabindex="-1">
     <div class="rail-head">
       <span class="eyebrow">Filters</span>
       <button class="btn btn-ghost" id="resetBtn" type="button" style="padding:2px 6px;font-size:12px">Reset all</button>
+      <button class="rail-close" id="railClose" type="button" aria-label="Close filters">&times;</button>
     </div>
     <div id="facets"></div>
   </aside>
@@ -886,6 +914,14 @@ const STATUS_TEXT = {
   unknown: "Status not set",
 };
 
+// Only http(s) links are rendered. Every URL in the workbook is https today,
+// but the column is free text, and a "javascript:" value typed into it would
+// otherwise become a link that runs when a colleague clicks it.
+function safeUrl(url) {
+  const trimmed = String(url == null ? "" : url).trim();
+  return /^https?:\/\//i.test(trimmed) ? trimmed : "";
+}
+
 function ukDate(iso) {
   if (!iso) return "TBC";
   const [y, m, d] = iso.split("-");
@@ -914,7 +950,7 @@ const FACETS = [
 const FLAGS = {
   cpd:       { label: "CPD bundle", test: (a) => a.cpd === "Yes" },
   multipart: { label: "Multi-part programme", test: (a) => a.parts > 0 },
-  nourl:     { label: "No website link", test: (a) => !a.url },
+  nourl:     { label: "No website link", test: (a) => !safeUrl(a.url) },
   tbc:       { label: "Venue or time to confirm", test: (a) => a.format === "Venue TBC" || a.time === "TO ADD" },
 };
 
@@ -1167,7 +1203,12 @@ function renderChips() {
   const chips = [];
   FACETS.forEach((facet) => {
     state.sel[facet.id].forEach((value) => {
-      const label = facet.custom ? FLAGS[value].label : (facet.render ? facet.render(value) : value);
+      // A hand-edited or truncated shared link can carry a value we do not
+      // know; show it verbatim rather than throwing and blanking the page.
+      const flag = facet.custom ? FLAGS[value] : null;
+      const label = facet.custom
+        ? (flag ? flag.label : value)
+        : (facet.render ? facet.render(value) : value);
       chips.push(`<button class="chip" type="button" data-drop="${facet.id}" data-value="${esc(value)}">${esc(label)}<span class="x">&times;</span></button>`);
     });
   });
@@ -1254,21 +1295,50 @@ function openPanel(id) {
       ])}
     </div>
 
-    ${a.url ? `<div class="panel-block"><a class="panel-link" href="${esc(a.url)}" target="_blank" rel="noopener">
+    ${safeUrl(a.url) ? `<div class="panel-block"><a class="panel-link" href="${esc(safeUrl(a.url))}" target="_blank" rel="noopener">
       View course page
       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true">
         <path d="M7 17L17 7M9 7h8v8"></path></svg>
     </a></div>` : `<div class="panel-block"><p style="color:var(--muted);font-size:13.5px;margin:0">No website page linked yet.</p></div>`}`;
 
   $("#panel").classList.add("is-open");
-  $("#scrim").classList.add("is-open");
   $("#panel").focus();
+  updateScrim();
 }
 
 function closePanel() {
+  if (!$("#panel").classList.contains("is-open")) return;
   $("#panel").classList.remove("is-open");
-  $("#scrim").classList.remove("is-open");
+  updateScrim();
   if (lastFocus) lastFocus.focus();
+}
+
+/* ------------------------------------------------------------ filter drawer */
+// Below this width the rail is a drawer over the page; above it, a fixed
+// column that is always on screen.
+const narrow = matchMedia("(max-width: 1080px)");
+
+function railOpen() {
+  return narrow.matches && !$("#rail").hasAttribute("hidden");
+}
+
+function updateScrim() {
+  const open = railOpen() || $("#panel").classList.contains("is-open");
+  $("#scrim").classList.toggle("is-open", open);
+}
+
+function setRail(open) {
+  const rail = $("#rail");
+  open ? rail.removeAttribute("hidden") : rail.setAttribute("hidden", "");
+  $("#railToggle").setAttribute("aria-expanded", String(open));
+  updateScrim();
+  if (open) rail.focus();
+}
+
+// Crossing the breakpoint resets the rail to that layout's default, so a rail
+// hidden on a phone can never stay hidden on a desktop, where nothing reopens it.
+function applyLayout() {
+  setRail(!narrow.matches);
 }
 
 /* -------------------------------------------------------- shareable state */
@@ -1297,6 +1367,9 @@ function readHash() {
     else if (key === "months") value.split("|").forEach((v) => state.months.add(v));
     else if (key === "once") state.hideLater = value === "1";
     else if (key === "view") state.view = value === "table" ? "table" : "schedule";
+    else if (key === "flags") value.split("|").forEach((v) => {
+      if (Object.prototype.hasOwnProperty.call(FLAGS, v)) state.sel.flags.add(v);
+    });
     else if (state.sel[key]) value.split("|").forEach((v) => state.sel[key].add(decodeURIComponent(v)));
   });
   $("#q").value = state.q;
@@ -1380,9 +1453,9 @@ $("#panelBody").addEventListener("click", (e) => {
 });
 
 $("#panelClose").addEventListener("click", closePanel);
-$("#scrim").addEventListener("click", closePanel);
+$("#scrim").addEventListener("click", () => { closePanel(); if (railOpen()) setRail(false); });
 document.addEventListener("keydown", (e) => {
-  if (e.key === "Escape") closePanel();
+  if (e.key === "Escape") { closePanel(); if (railOpen()) setRail(false); }
   if (e.key === "/" && document.activeElement !== $("#q")) { e.preventDefault(); $("#q").focus(); }
 });
 
@@ -1395,12 +1468,9 @@ $("#resetBtn").addEventListener("click", () => {
   render();
 });
 
-$("#railToggle").addEventListener("click", () => {
-  const rail = $("#rail");
-  const open = rail.hasAttribute("hidden");
-  open ? rail.removeAttribute("hidden") : rail.setAttribute("hidden", "");
-  $("#railToggle").setAttribute("aria-expanded", String(open));
-});
+$("#railToggle").addEventListener("click", () => setRail(!railOpen()));
+$("#railClose").addEventListener("click", () => setRail(false));
+narrow.addEventListener("change", applyLayout);
 
 $("#themeBtn").addEventListener("click", () => {
   const current = document.documentElement.getAttribute("data-theme");
@@ -1418,7 +1488,7 @@ try {
   if (saved) document.documentElement.setAttribute("data-theme", saved);
 } catch (err) { /* storage blocked */ }
 
-if (matchMedia("(max-width: 1080px)").matches) $("#rail").setAttribute("hidden", "");
+applyLayout();
 
 $("#genDate").textContent = DATA.generated;
 $("#year").textContent = DATA.year;
