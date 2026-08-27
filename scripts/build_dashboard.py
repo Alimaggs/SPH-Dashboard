@@ -12,7 +12,6 @@ Re-run this whenever the spreadsheet changes.
 from __future__ import annotations
 
 import base64
-import io
 import json
 import re
 import sys
@@ -21,20 +20,16 @@ from datetime import date, datetime
 from pathlib import Path
 
 import openpyxl
-from PIL import Image
 
 ROOT = Path(__file__).resolve().parent.parent
 DATA_DIR = ROOT / "Data"
-ASSETS = ROOT / "Design Assets"
-
-# Source artwork is far larger than it is ever displayed, so each image is
-# resized before being embedded. Heights are 2x the CSS size, for sharpness on
-# retina screens without carrying a megabyte of base64.
+# Pre-sized by scripts/prepare_images.py, so this build stays deterministic.
+IMAGES_DIR = ROOT / "src" / "images"
 IMAGES = {
-    "__SPH_ICON__":  ("SPH Icon.png", 88),
-    "__FAVICON__":   ("SPH Icon.png", 64),
-    "__CC_COLOUR__": ("Chaos Created Colour Logo@2x.png", 44),
-    "__CC_WHITE__":  ("Chaos Created White Logo@2x.png", 44),
+    "__SPH_ICON__":  "sph-icon.png",
+    "__FAVICON__":   "favicon.png",
+    "__CC_COLOUR__": "cc-colour.png",
+    "__CC_WHITE__":  "cc-white.png",
 }
 TEMPLATE = ROOT / "src" / "dashboard.template.html"
 # Sevalla serves this directory as the static site's publish directory.
@@ -111,15 +106,9 @@ def find_workbook() -> Path:
     return newest
 
 
-def embed_image(name: str, height: int) -> str:
-    """Resize an asset to `height` px and return it as a data URI."""
-    with Image.open(ASSETS / name) as img:
-        img = img.convert("RGBA")
-        width = round(img.width * height / img.height)
-        img = img.resize((width, height), Image.LANCZOS)
-        buffer = io.BytesIO()
-        img.save(buffer, format="PNG", optimize=True)
-    encoded = base64.b64encode(buffer.getvalue()).decode("ascii")
+def embed_image(name: str) -> str:
+    """Return a prepared image as a data URI."""
+    encoded = base64.b64encode((IMAGES_DIR / name).read_bytes()).decode("ascii")
     return f"data:image/png;base64,{encoded}"
 
 
@@ -302,8 +291,8 @@ def build() -> None:
     }
 
     html = TEMPLATE.read_text(encoding="utf-8")
-    for placeholder, (name, height) in IMAGES.items():
-        html = html.replace(placeholder, embed_image(name, height))
+    for placeholder, name in IMAGES.items():
+        html = html.replace(placeholder, embed_image(name))
     html = html.replace(
         '"__SPH_DATA__"',
         json.dumps(payload, ensure_ascii=False, separators=(",", ":")),

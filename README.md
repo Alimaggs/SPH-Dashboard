@@ -38,13 +38,33 @@ Requires `openpyxl` (`pip install -r requirements.txt`). Output lands in
 the workbook.
 
 ```
-Data/…xlsx  ─┐
-             ├─ scripts/build_dashboard.py ──▶ public/index.html
-src/dashboard.template.html ─┘                        public/robots.txt
+Data/…xlsx  ──────────────┐
+src/dashboard.template.html ──├─ scripts/build_dashboard.py ──▶ public/
+src/images/*.png ───────────┘
 ```
 
 Edit `src/dashboard.template.html` to change the dashboard itself; never edit
 anything in `public/`, it is overwritten on every build.
+
+The build is deterministic: the same inputs always produce a byte-identical
+`public/index.html`, so a rebuild that changes nothing commits nothing.
+
+### Changing the logos
+
+The images are embedded in the page, pre-sized in `src/images/`. Replace the
+artwork in `Design Assets`, then regenerate them:
+
+```bash
+pip install Pillow
+python scripts/prepare_images.py
+python scripts/build_dashboard.py
+```
+
+Pillow is deliberately **not** in `requirements.txt`. Resizing during the build
+made PNG output depend on the installed Pillow and zlib versions, so CI produced
+a byte-different file from a local build every time and committed a pointless
+rebuild on every push. Sizing happens once, here; the build only base64-encodes
+the result.
 
 ## Publishing an update
 
