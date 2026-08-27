@@ -10,16 +10,22 @@ it locally, email it, or drop it on a shared drive.
 
 ## Deploying
 
-The site is hosted as a **Sevalla static site** connected to this repo:
+The site is hosted as a **Sevalla static site** connected to this repo. Under
+*Build strategy*:
 
 | Setting | Value |
 |---|---|
-| Build command | *(leave empty)* |
+| Build site before publishing | **off** |
+| Root directory | `.` |
 | Publish directory | `public` |
+| Index file | `index.html` |
+| Build command / Node version | *(ignored while building is off)* |
 
-`public/index.html` is committed to the repo already built, so Sevalla needs no
-build step and no Python in its build image. Every push to `main` triggers a
-redeploy.
+`public/index.html` is committed already built, so Sevalla has nothing to build
+and needs no Python in its image. Publish directory is relative to the root
+directory, and its contents become the site root — so `public/index.html` is
+served at `/`, and there is **no need for an index file at the repo root**.
+Every push to `main` triggers a redeploy.
 
 ## Rebuilding after the spreadsheet changes
 
@@ -65,14 +71,28 @@ working.
 
 ## Keeping it out of search results
 
-The dashboard is not meant to be found by the public. Two measures ship with the
-build: a `noindex, nofollow, noarchive` meta tag in the page, and
-`public/robots.txt` disallowing all crawlers.
+The dashboard is not meant to be found by the public. Three measures ship with
+the build, because each can be ignored independently:
 
-Both are requests, which well-behaved crawlers honour and others ignore. If the
-content genuinely must not be seen, put it behind Sevalla's password protection
-rather than relying on these. Adding an `X-Robots-Tag: noindex` response header
-in Sevalla is a further belt-and-braces step.
+- a `noindex, nofollow, noarchive` meta tag in the page
+- `public/robots.txt` disallowing all crawlers
+- `public/_headers`, setting an `X-Robots-Tag: noindex` response header
+
+After the first deploy, confirm the header is actually being applied — Sevalla's
+`_headers` support was not covered in the settings documentation, so the file's
+expected location is unverified:
+
+```bash
+curl -sI https://sph-dashboard.chaoscreated.com/ | grep -i x-robots-tag
+```
+
+If nothing comes back, the meta tag and robots.txt still stand on their own.
+
+All three are *requests*. Well-behaved crawlers honour them; others ignore them,
+and none of them stop anyone who has the URL. Given the repo is public and the
+data includes events not yet published on the website, treat access control as a
+separate question — if this genuinely must not be seen, it needs authentication
+in front of it, not crawler hints.
 
 ### If the Action fails to push
 

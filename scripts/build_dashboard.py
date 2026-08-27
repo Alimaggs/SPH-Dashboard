@@ -290,10 +290,13 @@ def build() -> None:
     OUTPUT.parent.mkdir(parents=True, exist_ok=True)
     OUTPUT.write_text(html, encoding="utf-8")
 
-    # Keep the dashboard out of search results. The page also carries a
-    # noindex meta tag, since a host may serve robots.txt inconsistently.
+    # Keep the dashboard out of search results. Three overlapping signals,
+    # because each can be ignored independently: the noindex meta tag in the
+    # page, robots.txt, and an X-Robots-Tag header via Sevalla's _headers file.
     (PUBLIC / "robots.txt").write_text(
         "User-agent: *\nDisallow: /\n", encoding="utf-8")
+    (PUBLIC / "_headers").write_text(
+        "/*\n  X-Robots-Tag: noindex, nofollow, noarchive\n", encoding="utf-8")
 
     counted = sum(1 for r in rows if r["counts"])
     size = OUTPUT.stat().st_size / 1024
