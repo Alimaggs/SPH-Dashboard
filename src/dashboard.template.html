@@ -3,8 +3,9 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="icon" type="image/png" href="__FAVICON__">
 <meta name="robots" content="noindex, nofollow, noarchive">
-<title>SPH Activity Planner</title>
+<title>SPH Activity Dashboard</title>
 <meta name="description" content="View and filter every Bristol &amp; Beyond Stronger Practice Hub activity running in 2026-2027.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -179,7 +180,7 @@ a { color: var(--brand-ink); }
 }
 
 .brand { display: flex; align-items: center; gap: 14px; margin-right: auto; }
-.brand img { height: 46px; width: auto; display: block; }
+.brand-icon { height: 40px; width: auto; display: block; }
 .brand-text h1 { font-size: 20px; font-weight: 700; line-height: 1.15; }
 .brand-text p { margin: 2px 0 0; font-size: 13px; color: var(--muted); }
 
@@ -688,9 +689,26 @@ td.t-dim { color: var(--muted); }
   font-size: 12.5px;
   color: var(--muted);
   display: flex;
-  gap: 16px;
+  gap: 8px 20px;
   flex-wrap: wrap;
+  align-items: center;
 }
+
+.foot .by { display: inline-flex; align-items: center; gap: 8px; }
+.foot .by a { display: inline-flex; align-items: center; border-radius: 3px; }
+.cc { height: 22px; width: auto; display: block; }
+
+/* One artwork per theme. Light is the default, so the white mark stays hidden
+   until a dark theme resolves, in either of the two ways it can. */
+.cc-dark { display: none; }
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .cc-light { display: none; }
+  :root:not([data-theme="light"]) .cc-dark { display: block; }
+}
+
+:root[data-theme="dark"] .cc-light { display: none; }
+:root[data-theme="dark"] .cc-dark { display: block; }
 
 .rail-toggle { display: none; }
 
@@ -714,7 +732,7 @@ td.t-dim { color: var(--muted); }
 
 @media (max-width: 700px) {
   .masthead-inner { padding: 12px 16px; gap: 12px; }
-  .brand img { height: 38px; }
+  .brand-icon { height: 32px; }
   .brand-text h1 { font-size: 17px; }
   .brand-text p { display: none; }
   .shell { padding: 16px 16px 48px; gap: 16px; }
@@ -742,9 +760,9 @@ td.t-dim { color: var(--muted); }
 <header class="masthead">
   <div class="masthead-inner">
     <div class="brand">
-      <img src="__SPH_LOGO__" alt="Bristol &amp; Beyond Stronger Practice Hub">
+      <img class="brand-icon" src="__SPH_ICON__" alt="Bristol &amp; Beyond Stronger Practice Hub">
       <div class="brand-text">
-        <h1>Activity Planner</h1>
+        <h1>SPH Activity Dashboard</h1>
         <p>Everything we're running in 2026&ndash;2027</p>
       </div>
     </div>
@@ -760,7 +778,6 @@ td.t-dim { color: var(--muted); }
 
     <div class="tools">
       <button class="btn rail-toggle" id="railToggle" type="button" aria-expanded="false" aria-controls="rail">Filters</button>
-      <button class="btn" id="exportBtn" type="button">Export CSV</button>
       <button class="btn btn-ghost" id="themeBtn" type="button" aria-label="Switch theme">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
           <path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"></path>
@@ -806,7 +823,12 @@ td.t-dim { color: var(--muted); }
 <footer class="foot">
   <span>Data updated <span id="genDate"></span></span>
   <span>&copy; <span id="year"></span> Bristol &amp; Beyond Stronger Practice Hub</span>
-  <span>Dashboard by <a href="https://chaoscreated.co.uk" target="_blank" rel="noopener">Chaos Created</a></span>
+  <span class="by">Dashboard by
+    <a href="https://chaoscreated.co.uk" target="_blank" rel="noopener" aria-label="Chaos Created">
+      <img class="cc cc-light" src="__CC_COLOUR__" alt="Chaos Created">
+      <img class="cc cc-dark" src="__CC_WHITE__" alt="Chaos Created">
+    </a>
+  </span>
 </footer>
 
 <div class="scrim" id="scrim"></div>
@@ -828,8 +850,6 @@ const esc = (s) => String(s == null ? "" : s).replace(/[&<>"']/g, (c) =>
   ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
 
 const MONTH_SHORT = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-const BOM = "\uFEFF";          // Excel needs it to read UTF-8
-const EOL = "\r\n";
 const STATUS_ORDER = ["live", "built", "new", "later"];
 const STATUS_TEXT = {
   live: "Live on website",
@@ -1224,62 +1244,6 @@ function closePanel() {
   if (lastFocus) lastFocus.focus();
 }
 
-/* ------------------------------------------------------------------- csv */
-function exportCsv() {
-  const rows = sorted(filtered());
-  const head = ["Event Name", "Activity Date", "Day", "Time", "Brochure Category", "Location",
-    "Tickets", "Activity Type", "PD Category", "Network", "Mailing List", "CPD Bundle",
-    "Workflows", "Status", "Reporting Period", "Notes", "Website URL", "Short Description"];
-  const cell = (v) => `"${String(v == null ? "" : v).replace(/"/g, '""')}"`;
-  const body = rows.map((a) => [a.name, ukDate(a.date), a.day, a.time, a.brochure, a.location,
-    a.tickets, a.type, a.pd, a.network, (a.mailing || []).join("; "), a.cpd, a.workflows,
-    STATUS_TEXT[a.status], a.rp, a.notes, a.url, a.summary].map(cell).join(","));
-
-  const csv = BOM + [head.map(cell).join(","), ...body].join(EOL);
-  const stamp = new Date().toISOString().slice(0, 10);
-  saveFile("sph-activities-" + stamp, csv);
-}
-
-// Published on claude.ai the page must hand the file to the viewer through the
-// downloads capability; opened as a local file it uses an ordinary blob link.
-let downloadsApi = null;
-if (window.claude && typeof window.claude.use === "function") {
-  window.claude.use("downloads").then((api) => { downloadsApi = api; }).catch(() => {});
-}
-
-async function saveFile(stem, text) {
-  if (downloadsApi) {
-    try {
-      await downloadsApi.save({ filename: stem + ".csv", data: text });
-      return;
-    } catch (err) {
-      const code = err && err.code;
-      if (code === "declined" || code === "rate_limited") return;
-      if (code === "extension_not_enabled") {
-        // CSV is not enabled for this viewer; offer the same data as text.
-        try {
-          await downloadsApi.save({ filename: stem + ".csv.txt", data: text });
-          return;
-        } catch (retry) {
-          return;
-        }
-      }
-      // Anything else: fall through to the blob link below.
-    }
-  }
-
-  const blob = new Blob([text], { type: "text/csv;charset=utf-8" });
-  const url = URL.createObjectURL(blob);
-  const link = document.createElement("a");
-  link.href = url;
-  link.download = stem + ".csv";
-  document.body.appendChild(link);
-  link.click();
-  link.remove();
-  setTimeout(() => URL.revokeObjectURL(url), 1000);
-}
-
-
 /* -------------------------------------------------------- shareable state */
 function writeHash() {
   const parts = [];
@@ -1403,8 +1367,6 @@ $("#resetBtn").addEventListener("click", () => {
   FACETS.forEach((f) => state.sel[f.id].clear());
   render();
 });
-
-$("#exportBtn").addEventListener("click", exportCsv);
 
 $("#railToggle").addEventListener("click", () => {
   const rail = $("#rail");

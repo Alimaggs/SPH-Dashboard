@@ -1,4 +1,4 @@
-# SPH Activity Planner
+# SPH Activity Dashboard
 
 A dashboard for the Bristol & Beyond Stronger Practice Hub team to view and filter
 every activity running in 2026–2027.
@@ -108,9 +108,9 @@ notes, tickets, every HubSpot tag, and a link to the course page.
 
 **Filters** — reporting period, activity type, format, website status, PD
 category, brochure category, network, venue, mailing list, plus a "needs
-attention" group (workflows not configured, no website link, venue/time to
-confirm, CPD bundles, multi-part programmes). Option counts stay live as you
-filter. The month bar chart doubles as a month filter.
+attention" group (no website link, venue/time to confirm, CPD bundles,
+multi-part programmes). Option counts stay live as you filter. The month bar
+chart doubles as a month filter.
 
 **Counting** — the header shows both numbers: bookable sessions and distinct
 activities. Sessions 2 and 3 of a multi-part CPD programme are one booking, so
@@ -118,10 +118,7 @@ they don't count as separate activities. "Count programmes once" at the bottom o
 the filter rail hides those rows entirely.
 
 **Sharing a view** — filters are written into the URL, so a filtered view can be
-copied out of the address bar and sent to a colleague. (Inside sandboxed
-previews the URL stays fixed; the filters still work.)
-
-**Export CSV** — downloads exactly the rows currently on screen.
+copied out of the address bar and sent to a colleague.
 
 **Other** — light/dark theme toggle, `/` to jump to search, `Esc` to close the
 detail panel, and a print stylesheet that drops the controls and prints the list.

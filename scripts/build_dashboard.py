@@ -12,6 +12,7 @@ Re-run this whenever the spreadsheet changes.
 from __future__ import annotations
 
 import base64
+import io
 import json
 import re
 import sys
@@ -20,10 +21,21 @@ from datetime import date, datetime
 from pathlib import Path
 
 import openpyxl
+from PIL import Image
 
 ROOT = Path(__file__).resolve().parent.parent
 DATA_DIR = ROOT / "Data"
-LOGO = ROOT / "Design Assets" / "Bristol and Beyond SPH Early Years Logo Medium - Transparent.png"
+ASSETS = ROOT / "Design Assets"
+
+# Source artwork is far larger than it is ever displayed, so each image is
+# resized before being embedded. Heights are 2x the CSS size, for sharpness on
+# retina screens without carrying a megabyte of base64.
+IMAGES = {
+    "__SPH_ICON__":  ("SPH Icon.png", 88),
+    "__FAVICON__":   ("SPH Icon.png", 64),
+    "__CC_COLOUR__": ("Chaos Created Colour Logo@2x.png", 44),
+    "__CC_WHITE__":  ("Chaos Created White Logo@2x.png", 44),
+}
 TEMPLATE = ROOT / "src" / "dashboard.template.html"
 # Sevalla serves this directory as the static site's publish directory.
 PUBLIC = ROOT / "public"
@@ -97,6 +109,18 @@ def find_workbook() -> Path:
         print(f"note: {len(candidates)} spreadsheets in Data/, using the newest")
     print(f"reading {newest.name}")
     return newest
+
+
+def embed_image(name: str, height: int) -> str:
+    """Resize an asset to `height` px and return it as a data URI."""
+    with Image.open(ASSETS / name) as img:
+        img = img.convert("RGBA")
+        width = round(img.width * height / img.height)
+        img = img.resize((width, height), Image.LANCZOS)
+        buffer = io.BytesIO()
+        img.save(buffer, format="PNG", optimize=True)
+    encoded = base64.b64encode(buffer.getvalue()).decode("ascii")
+    return f"data:image/png;base64,{encoded}"
 
 
 def clean(value) -> str:
@@ -277,9 +301,9 @@ def build() -> None:
         "activities": rows,
     }
 
-    logo = base64.b64encode(LOGO.read_bytes()).decode("ascii")
     html = TEMPLATE.read_text(encoding="utf-8")
-    html = html.replace("__SPH_LOGO__", f"data:image/png;base64,{logo}")
+    for placeholder, (name, height) in IMAGES.items():
+        html = html.replace(placeholder, embed_image(name, height))
     html = html.replace(
         '"__SPH_DATA__"',
         json.dumps(payload, ensure_ascii=False, separators=(",", ":")),
