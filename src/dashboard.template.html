@@ -1,0 +1,1432 @@
+<title>SPH Activity Planner</title>
+<meta name="description" content="View and filter every Bristol &amp; Beyond Stronger Practice Hub activity running in 2026-2027.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Familjen+Grotesk:wght@500;600;700&family=Source+Sans+3:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap">
+
+<style>
+/* ---------------------------------------------------------------- tokens */
+:root {
+  --ground: #eef3f8;
+  --surface: #ffffff;
+  --surface-2: #f6f9fc;
+  --ink: #10202f;
+  --ink-2: #3c536a;
+  --muted: #647c93;
+  --line: #d7e2ec;
+  --line-soft: #e6edf4;
+
+  --brand: #224c7f;
+  --brand-deep: #133967;
+  --brand-ink: #224c7f;
+  --brand-soft: #dbeff5;
+  --brand-mid: #5b7da6;
+  --on-brand: #ffffff;
+
+  --amber: #eaa53e;
+  --amber-ink: #8a5c05;
+  --crimson: #c2133c;
+  --rust: #d35615;
+
+  --live: #2f7d52;
+  --live-bg: #e2f1e8;
+  --built: #1f6f9c;
+  --built-bg: #ddeef8;
+  --new: #a9760a;
+  --new-bg: #fbeed6;
+  --later: #b8500f;
+  --later-bg: #fbe7d8;
+
+  --shadow: 0 1px 2px rgba(16, 32, 47, .06), 0 8px 24px -12px rgba(16, 32, 47, .18);
+  --shadow-lift: 0 2px 6px rgba(16, 32, 47, .08), 0 22px 48px -20px rgba(16, 32, 47, .35);
+  --radius: 10px;
+
+  --display: "Familjen Grotesk", "Segoe UI", system-ui, sans-serif;
+  --body: "Source Sans 3", "Segoe UI", system-ui, sans-serif;
+  --mono: "IBM Plex Mono", ui-monospace, "Cascadia Mono", monospace;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --ground: #0b1622;
+    --surface: #12212f;
+    --surface-2: #16283a;
+    --ink: #e9f1f8;
+    --ink-2: #b3c6d7;
+    --muted: #8ba2b7;
+    --line: #24394f;
+    --line-soft: #1c2e41;
+
+    --brand: #6d97c4;
+    --brand-deep: #9dbcdc;
+    --brand-ink: #a9c6e2;
+    --brand-soft: #17324b;
+    --brand-mid: #5b7da6;
+    --on-brand: #0b1622;
+
+    --amber: #eaa53e;
+    --amber-ink: #eec27c;
+    --crimson: #e4536f;
+    --rust: #e5813f;
+
+    --live: #6fc191;
+    --live-bg: #14352a;
+    --built: #64b3dd;
+    --built-bg: #10303f;
+    --new: #e0ab4c;
+    --new-bg: #382a12;
+    --later: #ec8c4f;
+    --later-bg: #3a2314;
+
+    --shadow: 0 1px 2px rgba(0, 0, 0, .4), 0 10px 28px -14px rgba(0, 0, 0, .7);
+    --shadow-lift: 0 2px 8px rgba(0, 0, 0, .45), 0 26px 56px -22px rgba(0, 0, 0, .8);
+  }
+}
+
+:root[data-theme="dark"] {
+  --ground: #0b1622;
+  --surface: #12212f;
+  --surface-2: #16283a;
+  --ink: #e9f1f8;
+  --ink-2: #b3c6d7;
+  --muted: #8ba2b7;
+  --line: #24394f;
+  --line-soft: #1c2e41;
+
+  --brand: #6d97c4;
+  --brand-deep: #9dbcdc;
+  --brand-ink: #a9c6e2;
+  --brand-soft: #17324b;
+  --brand-mid: #5b7da6;
+  --on-brand: #0b1622;
+
+  --amber: #eaa53e;
+  --amber-ink: #eec27c;
+  --crimson: #e4536f;
+  --rust: #e5813f;
+
+  --live: #6fc191;
+  --live-bg: #14352a;
+  --built: #64b3dd;
+  --built-bg: #10303f;
+  --new: #e0ab4c;
+  --new-bg: #382a12;
+  --later: #ec8c4f;
+  --later-bg: #3a2314;
+
+  --shadow: 0 1px 2px rgba(0, 0, 0, .4), 0 10px 28px -14px rgba(0, 0, 0, .7);
+  --shadow-lift: 0 2px 8px rgba(0, 0, 0, .45), 0 26px 56px -22px rgba(0, 0, 0, .8);
+}
+
+/* ------------------------------------------------------------------ base */
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  background: var(--ground);
+  color: var(--ink);
+  font-family: var(--body);
+  font-size: 15px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+h1, h2, h3 { font-family: var(--display); margin: 0; text-wrap: balance; letter-spacing: -.01em; }
+button, input, select { font: inherit; color: inherit; }
+a { color: var(--brand-ink); }
+
+:focus-visible {
+  outline: 2px solid var(--amber);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+.eyebrow {
+  font-family: var(--display);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.num { font-variant-numeric: tabular-nums; }
+.sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+
+/* --------------------------------------------------------------- masthead */
+.masthead {
+  position: sticky;
+  top: 0;
+  z-index: 40;
+  background: var(--surface);
+  border-bottom: 1px solid var(--line);
+}
+
+.masthead-inner {
+  max-width: 1580px;
+  margin: 0 auto;
+  padding: 14px 24px;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.brand { display: flex; align-items: center; gap: 14px; margin-right: auto; }
+.brand img { height: 46px; width: auto; display: block; }
+.brand-text h1 { font-size: 20px; font-weight: 700; line-height: 1.15; }
+.brand-text p { margin: 2px 0 0; font-size: 13px; color: var(--muted); }
+
+.search {
+  position: relative;
+  flex: 1 1 300px;
+  max-width: 400px;
+}
+
+.search input {
+  width: 100%;
+  padding: 9px 34px 9px 36px;
+  background: var(--surface-2);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  font-size: 14px;
+}
+.search input::placeholder { color: var(--muted); }
+.search svg { position: absolute; left: 11px; top: 50%; transform: translateY(-50%); color: var(--muted); }
+.search .clear {
+  position: absolute; right: 6px; top: 50%; transform: translateY(-50%);
+  border: 0; background: none; color: var(--muted); cursor: pointer;
+  padding: 4px 6px; line-height: 1; border-radius: 4px;
+}
+.search .clear:hover { color: var(--ink); }
+
+.tools { display: flex; gap: 8px; align-items: center; }
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 13px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--ink-2);
+  cursor: pointer;
+  white-space: nowrap;
+}
+.btn:hover { border-color: var(--brand-mid); color: var(--ink); }
+.btn-ghost { background: none; border-color: transparent; }
+
+/* ------------------------------------------------------------------ shell */
+.shell {
+  max-width: 1580px;
+  margin: 0 auto;
+  padding: 22px 24px 64px;
+  display: grid;
+  grid-template-columns: 268px minmax(0, 1fr);
+  gap: 26px;
+  align-items: start;
+}
+
+/* ------------------------------------------------------------------- rail */
+.rail {
+  position: sticky;
+  top: 88px;
+  max-height: calc(100vh - 108px);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding-right: 4px;
+}
+
+.rail-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px;
+  padding-bottom: 8px;
+}
+
+.facet { border-top: 1px solid var(--line-soft); padding: 12px 0 4px; }
+.facet:first-of-type { border-top: 0; }
+
+.facet > summary {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  list-style: none;
+  font-family: var(--display);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: var(--muted);
+  padding: 2px 0 8px;
+}
+.facet > summary::-webkit-details-marker { display: none; }
+.facet > summary::before {
+  content: "";
+  width: 6px; height: 6px;
+  border-right: 1.5px solid currentColor;
+  border-bottom: 1.5px solid currentColor;
+  transform: rotate(-45deg);
+  transition: transform .15s ease;
+  margin-left: 2px;
+}
+.facet[open] > summary::before { transform: rotate(45deg); }
+.facet > summary:hover { color: var(--ink-2); }
+.facet .count-on {
+  margin-left: auto;
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0;
+  color: var(--brand-ink);
+}
+
+.opts { display: flex; flex-direction: column; gap: 1px; padding-bottom: 6px; }
+
+.opt {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 5px 8px 5px 6px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 13.5px;
+  color: var(--ink-2);
+}
+.opt:hover { background: var(--surface); color: var(--ink); }
+.opt input { accent-color: var(--brand); margin: 0; width: 14px; height: 14px; flex: none; }
+.opt .label { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.opt .n { font-family: var(--mono); font-size: 11px; color: var(--muted); }
+.opt.is-on { color: var(--ink); font-weight: 600; }
+.opt.is-empty { opacity: .42; }
+
+.swatch { width: 8px; height: 8px; border-radius: 2px; flex: none; }
+.sw-live { background: var(--live); }
+.sw-built { background: var(--built); }
+.sw-new { background: var(--new); }
+.sw-later { background: var(--later); }
+
+/* ------------------------------------------------------------------- main */
+.main { display: flex; flex-direction: column; gap: 18px; min-width: 0; }
+
+.stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(128px, 1fr));
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  overflow: hidden;
+  box-shadow: var(--shadow);
+}
+
+/* Dividers are drawn per card and clipped at the container edge, so a row
+   that wraps short doesn't leave a stray empty cell showing through. */
+.stat {
+  background: var(--surface);
+  box-shadow: 1px 0 0 var(--line), 0 1px 0 var(--line);
+  padding: 13px 16px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  text-align: left;
+  border: 0;
+  font: inherit;
+}
+button.stat { cursor: pointer; }
+button.stat:hover { background: var(--surface-2); }
+.stat .v {
+  font-family: var(--display);
+  font-size: 27px;
+  font-weight: 700;
+  line-height: 1.05;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -.02em;
+}
+.stat .k { font-size: 12px; color: var(--muted); }
+.stat .sub { font-size: 11.5px; color: var(--muted); font-family: var(--mono); }
+.stat.accent .v { color: var(--brand-ink); }
+.stat.warn .v { color: var(--rust); }
+.stat.good .v { color: var(--live); }
+
+/* ------------------------------------------------------------ month strip */
+.months {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 12px 16px 8px;
+  box-shadow: var(--shadow);
+}
+.months-head { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; margin-bottom: 8px; }
+.bars { display: flex; gap: 3px; align-items: flex-end; overflow-x: auto; padding-bottom: 2px; }
+
+.bar {
+  flex: 1 1 0;
+  min-width: 34px;
+  border: 0;
+  background: none;
+  padding: 0 0 4px;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 5px;
+  border-radius: 6px;
+}
+.bar .col {
+  height: 54px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  background: var(--line-soft);
+  border-radius: 3px;
+  overflow: hidden;
+}
+.bar .fill { background: var(--brand-mid); border-radius: 3px 3px 0 0; transition: height .2s ease; }
+.bar .m { font-size: 10.5px; color: var(--muted); font-family: var(--mono); text-align: center; }
+.bar .c { font-size: 11px; font-family: var(--mono); color: var(--ink-2); text-align: center; font-weight: 500; }
+.bar:hover .fill { background: var(--brand); }
+.bar.is-on .fill { background: var(--amber); }
+.bar.is-on .m, .bar.is-on .c { color: var(--amber-ink); font-weight: 600; }
+.bar.is-zero { opacity: .45; }
+
+/* ---------------------------------------------------------------- toolbar */
+.toolbar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.result-count { font-size: 13.5px; color: var(--muted); margin-right: auto; }
+.result-count strong { color: var(--ink); font-weight: 700; font-variant-numeric: tabular-nums; }
+
+.segmented {
+  display: inline-flex;
+  background: var(--surface-2);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 2px;
+  gap: 2px;
+}
+.segmented button {
+  border: 0;
+  background: none;
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--muted);
+  cursor: pointer;
+}
+.segmented button[aria-pressed="true"] { background: var(--surface); color: var(--ink); box-shadow: var(--shadow); }
+
+.chips { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 8px 4px 10px;
+  background: var(--brand-soft);
+  color: var(--brand-deep);
+  border: 1px solid transparent;
+  border-radius: 999px;
+  font-size: 12.5px;
+  font-weight: 600;
+  cursor: pointer;
+}
+.chip:hover { border-color: var(--brand-mid); }
+.chip .x { font-size: 14px; line-height: 1; opacity: .65; }
+
+/* ----------------------------------------------------------- schedule view */
+.month-group { margin-bottom: 26px; }
+
+.month-rule {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  padding-bottom: 9px;
+  margin-bottom: 10px;
+  border-bottom: 2px solid var(--ink);
+}
+.month-rule h2 { font-size: 17px; font-weight: 700; }
+.month-rule .n { font-family: var(--mono); font-size: 12px; color: var(--muted); margin-left: auto; }
+
+.rows { display: flex; flex-direction: column; gap: 8px; }
+
+.row {
+  display: grid;
+  grid-template-columns: 62px minmax(0, 1fr) auto;
+  gap: 16px;
+  align-items: start;
+  width: 100%;
+  text-align: left;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-left: 3px solid var(--line);
+  border-radius: var(--radius);
+  padding: 12px 14px 12px 13px;
+  cursor: pointer;
+  font: inherit;
+  color: inherit;
+  box-shadow: var(--shadow);
+}
+.row:hover { border-color: var(--brand-mid); border-left-color: var(--brand); box-shadow: var(--shadow-lift); }
+.row.st-live { border-left-color: var(--live); }
+.row.st-built { border-left-color: var(--built); }
+.row.st-new { border-left-color: var(--new); }
+.row.st-later { border-left-color: var(--later); }
+
+.date-cell { text-align: center; padding-top: 1px; }
+.date-cell .d {
+  font-family: var(--display);
+  font-size: 24px;
+  font-weight: 700;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+}
+.date-cell .w { font-size: 10.5px; text-transform: uppercase; letter-spacing: .08em; color: var(--muted); margin-top: 3px; }
+
+.row-body { min-width: 0; display: flex; flex-direction: column; gap: 5px; }
+.row-title { font-family: var(--display); font-size: 15.5px; font-weight: 600; line-height: 1.3; }
+.row-meta { display: flex; flex-wrap: wrap; gap: 4px 14px; font-size: 12.5px; color: var(--muted); }
+.row-meta span { display: inline-flex; align-items: center; gap: 5px; }
+.row-tags { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 2px; }
+.row-side { display: flex; flex-direction: column; align-items: flex-end; gap: 6px; }
+
+.pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-size: 11.5px;
+  font-weight: 600;
+  white-space: nowrap;
+  border: 1px solid transparent;
+}
+.pill-live { background: var(--live-bg); color: var(--live); }
+.pill-built { background: var(--built-bg); color: var(--built); }
+.pill-new { background: var(--new-bg); color: var(--new); }
+.pill-later { background: var(--later-bg); color: var(--later); }
+.pill-type { background: var(--surface-2); color: var(--ink-2); border-color: var(--line); }
+.pill-cat { background: transparent; color: var(--muted); border-color: var(--line); font-weight: 500; }
+.pill-cpd { background: transparent; color: var(--crimson); border-color: var(--crimson); }
+
+.tickets { font-family: var(--mono); font-size: 12px; color: var(--muted); white-space: nowrap; }
+.tickets b { color: var(--ink-2); font-weight: 500; }
+
+/* -------------------------------------------------------------- table view */
+.table-wrap {
+  overflow-x: auto;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+}
+table { border-collapse: collapse; width: 100%; font-size: 13.5px; }
+thead th {
+  position: sticky;
+  top: 76px;
+  z-index: 5;
+  background: var(--surface-2);
+  text-align: left;
+  font-family: var(--display);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: var(--muted);
+  padding: 9px 12px;
+  border-bottom: 1px solid var(--line);
+  white-space: nowrap;
+}
+thead th.sortable { cursor: pointer; }
+thead th.sortable:hover { color: var(--ink); }
+thead th .arrow { opacity: .45; font-size: 9px; }
+tbody td { padding: 9px 12px; border-bottom: 1px solid var(--line-soft); vertical-align: top; }
+tbody tr { cursor: pointer; }
+tbody tr:hover td { background: var(--surface-2); }
+tbody tr:last-child td { border-bottom: 0; }
+td.t-name { font-weight: 600; min-width: 250px; }
+td.t-date { white-space: nowrap; font-variant-numeric: tabular-nums; color: var(--ink-2); }
+td.t-num { text-align: right; font-family: var(--mono); font-size: 12.5px; }
+td.t-dim { color: var(--muted); }
+
+/* ------------------------------------------------------------------ empty */
+.empty {
+  background: var(--surface);
+  border: 1px dashed var(--line);
+  border-radius: var(--radius);
+  padding: 48px 24px;
+  text-align: center;
+  color: var(--muted);
+}
+.empty h3 { font-size: 17px; color: var(--ink); margin-bottom: 6px; }
+
+/* ------------------------------------------------------------------ panel */
+.scrim {
+  position: fixed;
+  inset: 0;
+  background: rgba(10, 22, 34, .42);
+  z-index: 60;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .2s ease;
+}
+.scrim.is-open { opacity: 1; pointer-events: auto; }
+
+.panel {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: min(460px, 100%);
+  z-index: 61;
+  background: var(--surface);
+  border-left: 1px solid var(--line);
+  box-shadow: var(--shadow-lift);
+  transform: translateX(100%);
+  transition: transform .24s cubic-bezier(.4, 0, .2, 1);
+  display: flex;
+  flex-direction: column;
+}
+.panel.is-open { transform: none; }
+
+.panel-head {
+  padding: 18px 20px 14px;
+  border-bottom: 1px solid var(--line);
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+}
+.panel-head h2 { font-size: 18px; font-weight: 700; line-height: 1.25; flex: 1; }
+.panel-close {
+  border: 1px solid var(--line);
+  background: var(--surface);
+  border-radius: 7px;
+  width: 30px; height: 30px;
+  cursor: pointer;
+  color: var(--muted);
+  font-size: 17px;
+  line-height: 1;
+  flex: none;
+}
+.panel-close:hover { color: var(--ink); border-color: var(--brand-mid); }
+
+.panel-body { overflow-y: auto; padding: 16px 20px 32px; display: flex; flex-direction: column; gap: 18px; }
+.panel-pills { display: flex; flex-wrap: wrap; gap: 6px; }
+.panel-summary { font-size: 14.5px; color: var(--ink-2); line-height: 1.6; }
+
+.dl { display: grid; grid-template-columns: 104px minmax(0, 1fr); gap: 7px 14px; font-size: 13.5px; }
+.dl dt { color: var(--muted); font-size: 12px; padding-top: 1px; }
+.dl dd { margin: 0; color: var(--ink); }
+.dl dd.mono { font-family: var(--mono); font-size: 11.5px; word-break: break-word; }
+
+.panel-block { border-top: 1px solid var(--line-soft); padding-top: 16px; }
+.panel-block > .eyebrow { display: block; margin-bottom: 8px; }
+.note {
+  background: var(--surface-2);
+  border-left: 2px solid var(--amber);
+  padding: 9px 12px;
+  border-radius: 0 6px 6px 0;
+  font-size: 13.5px;
+  color: var(--ink-2);
+}
+.panel-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 9px 14px;
+  background: var(--brand);
+  color: var(--on-brand);
+  border-radius: 8px;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 13.5px;
+}
+.panel-link:hover { background: var(--brand-deep); }
+
+.siblings { display: flex; flex-direction: column; gap: 5px; }
+.sibling {
+  display: flex;
+  align-items: baseline;
+  gap: 9px;
+  padding: 7px 10px;
+  background: var(--surface-2);
+  border: 1px solid var(--line-soft);
+  border-radius: 7px;
+  font-size: 13px;
+  cursor: pointer;
+  text-align: left;
+  width: 100%;
+  color: inherit;
+}
+.sibling:hover { border-color: var(--brand-mid); }
+.sibling .s-n { font-family: var(--mono); font-size: 11px; color: var(--muted); flex: none; }
+.sibling .s-d { margin-left: auto; font-variant-numeric: tabular-nums; color: var(--muted); font-size: 12px; flex: none; }
+.sibling.is-current { border-color: var(--brand); background: var(--brand-soft); }
+
+/* ----------------------------------------------------------------- footer */
+.foot {
+  max-width: 1580px;
+  margin: 0 auto;
+  padding: 0 24px 40px;
+  font-size: 12.5px;
+  color: var(--muted);
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.rail-toggle { display: none; }
+
+/* ------------------------------------------------------------ responsive */
+@media (max-width: 1080px) {
+  .shell { grid-template-columns: minmax(0, 1fr); }
+  .rail-toggle { display: inline-flex; }
+  .rail {
+    position: static;
+    max-height: none;
+    order: 2;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    padding: 14px 16px;
+  }
+  .rail[hidden] { display: none; }
+  .main { order: 1; }
+  thead th { top: 0; }
+}
+
+@media (max-width: 700px) {
+  .masthead-inner { padding: 12px 16px; gap: 12px; }
+  .brand img { height: 38px; }
+  .brand-text h1 { font-size: 17px; }
+  .brand-text p { display: none; }
+  .shell { padding: 16px 16px 48px; gap: 16px; }
+  .foot { padding: 0 16px 32px; }
+  .row { grid-template-columns: 48px minmax(0, 1fr); gap: 12px; }
+  .row-side { grid-column: 2; flex-direction: row; align-items: center; flex-wrap: wrap; }
+  .date-cell .d { font-size: 20px; }
+  .stat .v { font-size: 22px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * { transition: none !important; animation: none !important; }
+}
+
+@media print {
+  .masthead, .rail, .months, .toolbar, .scrim, .panel, .foot, .tools { display: none !important; }
+  .shell { display: block; padding: 0; }
+  .row { break-inside: avoid; box-shadow: none; }
+  body { background: #fff; }
+}
+</style>
+
+<header class="masthead">
+  <div class="masthead-inner">
+    <div class="brand">
+      <img src="__SPH_LOGO__" alt="Bristol &amp; Beyond Stronger Practice Hub">
+      <div class="brand-text">
+        <h1>Activity Planner</h1>
+        <p>Everything we're running in 2026&ndash;2027</p>
+      </div>
+    </div>
+
+    <div class="search">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true">
+        <circle cx="11" cy="11" r="7"></circle><path d="M20 20l-3.5-3.5"></path>
+      </svg>
+      <label class="sr" for="q">Search activities</label>
+      <input id="q" type="search" placeholder="Search titles, notes, venues&hellip;" autocomplete="off">
+      <button class="clear" id="qClear" type="button" hidden aria-label="Clear search">&times;</button>
+    </div>
+
+    <div class="tools">
+      <button class="btn rail-toggle" id="railToggle" type="button" aria-expanded="false" aria-controls="rail">Filters</button>
+      <button class="btn" id="exportBtn" type="button">Export CSV</button>
+      <button class="btn btn-ghost" id="themeBtn" type="button" aria-label="Switch theme">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+          <path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"></path>
+        </svg>
+      </button>
+    </div>
+  </div>
+</header>
+
+<div class="shell">
+  <aside class="rail" id="rail" aria-label="Filters">
+    <div class="rail-head">
+      <span class="eyebrow">Filters</span>
+      <button class="btn btn-ghost" id="resetBtn" type="button" style="padding:2px 6px;font-size:12px">Reset all</button>
+    </div>
+    <div id="facets"></div>
+  </aside>
+
+  <main class="main">
+    <section class="stats" id="stats" aria-label="Summary"></section>
+
+    <section class="months">
+      <div class="months-head">
+        <span class="eyebrow">Activities by month</span>
+        <span class="eyebrow" id="monthHint">Click a month to filter</span>
+      </div>
+      <div class="bars" id="bars"></div>
+    </section>
+
+    <div class="toolbar">
+      <p class="result-count" id="count"></p>
+      <div class="chips" id="chips"></div>
+      <div class="segmented" role="group" aria-label="View">
+        <button type="button" data-view="schedule" aria-pressed="true">Schedule</button>
+        <button type="button" data-view="table" aria-pressed="false">Table</button>
+      </div>
+    </div>
+
+    <div id="results"></div>
+  </main>
+</div>
+
+<footer class="foot">
+  <span>Source: <strong id="srcName"></strong></span>
+  <span>Built <span id="genDate"></span></span>
+  <span>Bristol &amp; Beyond Stronger Practice Hub</span>
+</footer>
+
+<div class="scrim" id="scrim"></div>
+<aside class="panel" id="panel" role="dialog" aria-modal="true" aria-labelledby="panelTitle" tabindex="-1">
+  <div class="panel-head">
+    <h2 id="panelTitle"></h2>
+    <button class="panel-close" id="panelClose" type="button" aria-label="Close">&times;</button>
+  </div>
+  <div class="panel-body" id="panelBody"></div>
+</aside>
+
+<script>
+const DATA = "__SPH_DATA__";
+const ACTIVITIES = DATA.activities;
+
+/* ------------------------------------------------------------------ utils */
+const $ = (sel) => document.querySelector(sel);
+const esc = (s) => String(s == null ? "" : s).replace(/[&<>"']/g, (c) =>
+  ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+
+const MONTH_SHORT = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+const BOM = "\uFEFF";          // Excel needs it to read UTF-8
+const EOL = "\r\n";
+const STATUS_ORDER = ["live", "built", "new", "later"];
+const STATUS_TEXT = {
+  live: "Live on website",
+  built: "Built, not public",
+  new: "Not yet on website",
+  later: "Later session",
+  unknown: "Status not set",
+};
+
+function ukDate(iso) {
+  if (!iso) return "TBC";
+  const [y, m, d] = iso.split("-");
+  return `${d}/${m}/${y}`;
+}
+function longDate(iso, day) {
+  if (!iso) return "Date TBC";
+  const [y, m, d] = iso.split("-");
+  return `${day ? day + " " : ""}${Number(d)} ${MONTH_SHORT[Number(m) - 1]} ${y}`;
+}
+
+/* ---------------------------------------------------------------- facets */
+const FACETS = [
+  { id: "rp", label: "Reporting period", get: (a) => [a.rp], order: ["RP1", "RP2", "RP3", "RP4"] },
+  { id: "type", label: "Activity type", get: (a) => (a.type ? [a.type] : []) },
+  { id: "format", label: "Format", get: (a) => [a.format] },
+  { id: "status", label: "Website status", get: (a) => [a.status], order: STATUS_ORDER, render: (v) => STATUS_TEXT[v] || v, swatch: true },
+  { id: "pd", label: "PD category", get: (a) => (a.pd ? [a.pd] : []) },
+  { id: "brochure", label: "Brochure category", get: (a) => (a.brochure ? [a.brochure] : []) },
+  { id: "network", label: "Network", get: (a) => (a.network ? [a.network] : []) },
+  { id: "venue", label: "Venue", get: (a) => (a.venue ? [a.venue] : []) },
+  { id: "mailing", label: "Mailing list", get: (a) => a.mailing || [] },
+  { id: "flags", label: "Needs attention", custom: true },
+];
+
+const FLAGS = {
+  cpd:       { label: "CPD bundle", test: (a) => a.cpd === "Yes" },
+  multipart: { label: "Multi-part programme", test: (a) => a.parts > 0 },
+  noflow:    { label: "Workflows not configured", test: (a) => a.workflows !== "Yes" },
+  nourl:     { label: "No website link", test: (a) => !a.url },
+  tbc:       { label: "Venue or time to confirm", test: (a) => a.format === "Venue TBC" || a.time === "TO ADD" },
+};
+
+const state = {
+  q: "",
+  view: "schedule",
+  sort: "date",
+  dir: 1,
+  sel: {},
+  months: new Set(),
+  hideLater: false,
+};
+FACETS.forEach((f) => (state.sel[f.id] = new Set()));
+
+function matchesText(a) {
+  if (!state.q) return true;
+  const hay = [a.name, a.summary, a.notes, a.location, a.venue, a.brochure, a.pd,
+               a.network, a.type, (a.mailing || []).join(" "), a.day, a.time]
+    .join(" ").toLowerCase();
+  return state.q.split(/\s+/).every((t) => hay.includes(t));
+}
+
+function passesFlags(a, except) {
+  for (const [key, flag] of Object.entries(FLAGS)) {
+    if (key === except) continue;
+    if (state.sel.flags.has(key) && !flag.test(a)) return false;
+  }
+  return true;
+}
+
+/** Filter, optionally ignoring one facet (so its own option counts stay live). */
+function filtered(ignore) {
+  return ACTIVITIES.filter((a) => {
+    if (state.hideLater && a.session && a.session > 1) return false;
+    if (!matchesText(a)) return false;
+    if (ignore !== "months" && state.months.size && !state.months.has(a.month)) return false;
+    for (const facet of FACETS) {
+      if (facet.id === ignore) continue;
+      if (facet.custom) { if (!passesFlags(a)) return false; continue; }
+      const chosen = state.sel[facet.id];
+      if (!chosen.size) continue;
+      if (!facet.get(a).some((v) => chosen.has(v))) return false;
+    }
+    if (ignore && ignore !== "flags" && ignore !== "months") {
+      if (!passesFlags(a)) return false;
+    }
+    return true;
+  });
+}
+
+/* ------------------------------------------------------------ rail render */
+function renderFacets() {
+  const html = FACETS.map((facet) => {
+    const chosen = state.sel[facet.id];
+    const pool = filtered(facet.id);
+    let options;
+
+    if (facet.custom) {
+      options = Object.entries(FLAGS).map(([key, flag]) => ({
+        value: key,
+        label: flag.label,
+        n: filtered("flags").filter((a) => passesFlags(a, key) && flag.test(a)).length,
+      }));
+    } else {
+      const counts = new Map();
+      pool.forEach((a) => facet.get(a).forEach((v) => counts.set(v, (counts.get(v) || 0) + 1)));
+      // Keep chosen values visible even when the current filters zero them out.
+      chosen.forEach((v) => { if (!counts.has(v)) counts.set(v, 0); });
+      options = [...counts.keys()].sort((a, b) => {
+        if (facet.order) return facet.order.indexOf(a) - facet.order.indexOf(b);
+        return a.localeCompare(b);
+      }).map((v) => ({ value: v, label: facet.render ? facet.render(v) : v, n: counts.get(v), swatch: facet.swatch }));
+    }
+
+    if (!options.length) return "";
+    const open = chosen.size > 0 || ["rp", "type", "status"].includes(facet.id);
+
+    return `<details class="facet" ${open ? "open" : ""} data-facet="${facet.id}">
+      <summary>${esc(facet.label)}${chosen.size ? `<span class="count-on">${chosen.size}</span>` : ""}</summary>
+      <div class="opts">${options.map((o) => `
+        <label class="opt ${chosen.has(o.value) ? "is-on" : ""} ${o.n === 0 ? "is-empty" : ""}">
+          <input type="checkbox" data-facet="${facet.id}" value="${esc(o.value)}" ${chosen.has(o.value) ? "checked" : ""}>
+          ${o.swatch ? `<span class="swatch sw-${esc(o.value)}"></span>` : ""}
+          <span class="label" title="${esc(o.label)}">${esc(o.label)}</span>
+          <span class="n num">${o.n}</span>
+        </label>`).join("")}</div>
+    </details>`;
+  }).join("");
+
+  $("#facets").innerHTML = html + `
+    <div class="facet" style="padding-top:14px">
+      <label class="opt ${state.hideLater ? "is-on" : ""}">
+        <input type="checkbox" id="hideLater" ${state.hideLater ? "checked" : ""}>
+        <span class="label">Count programmes once</span>
+      </label>
+      <p style="margin:4px 0 0 6px;font-size:11.5px;color:var(--muted);line-height:1.4">
+        Hides sessions 2 and 3 of multi-part CPD programmes &mdash; one booking covers them all.
+      </p>
+    </div>`;
+}
+
+/* ----------------------------------------------------------------- stats */
+function renderStats(rows) {
+  const distinct = rows.filter((a) => a.counts).length;
+  const online = rows.filter((a) => a.format === "Online").length;
+  const f2f = rows.filter((a) => a.format === "Face-to-face").length;
+  const capacity = rows.reduce((sum, a) => sum + (a.tickets || 0), 0);
+  const live = rows.filter((a) => a.status === "live").length;
+  const noflow = rows.filter((a) => a.workflows !== "Yes").length;
+
+  const card = (cls, value, key, sub, action) => `
+    <${action ? "button" : "div"} class="stat ${cls}" ${action ? `type="button" data-stat="${action}"` : ""}>
+      <span class="v num">${value}</span>
+      <span class="k">${key}</span>
+      ${sub ? `<span class="sub">${sub}</span>` : ""}
+    </${action ? "button" : "div"}>`;
+
+  $("#stats").innerHTML = [
+    card("accent", distinct, "Activities", `${rows.length} bookable sessions`),
+    card("", online, "Online", `${Math.round(online / (rows.length || 1) * 100)}% of sessions`, "online"),
+    card("", f2f, "Face-to-face", f2f ? `${new Set(rows.filter((a) => a.venue).map((a) => a.venue)).size} venues` : "&mdash;", "f2f"),
+    card("", capacity.toLocaleString("en-GB"), "Ticket capacity", "across all sessions"),
+    card("good", live, "Live on website", `${rows.length - live} still to publish`, "live"),
+    card(noflow ? "warn" : "good", noflow, "Workflows to set up", noflow ? "needs HubSpot config" : "all configured", "noflow"),
+  ].join("");
+}
+
+/* ------------------------------------------------------------ month strip */
+function renderMonths(rows) {
+  const all = new Map();
+  ACTIVITIES.forEach((a) => { if (a.month) all.set(a.month, (all.get(a.month) || 0) + 1); });
+  const hits = new Map();
+  rows.forEach((a) => { if (a.month) hits.set(a.month, (hits.get(a.month) || 0) + 1); });
+  const keys = [...all.keys()].sort();
+  const peak = Math.max(...all.values(), 1);
+
+  $("#bars").innerHTML = keys.map((key) => {
+    const [y, m] = key.split("-");
+    const total = all.get(key) || 0;
+    const hit = hits.get(key) || 0;
+    const on = state.months.has(key);
+    return `<button type="button" class="bar ${on ? "is-on" : ""} ${hit === 0 ? "is-zero" : ""}"
+        data-month="${key}" aria-pressed="${on}"
+        title="${MONTH_SHORT[Number(m) - 1]} ${y}: ${hit} of ${total} shown">
+      <span class="c num">${hit}</span>
+      <span class="col"><span class="fill" style="height:${Math.max(hit / peak * 100, hit ? 6 : 0)}%"></span></span>
+      <span class="m">${MONTH_SHORT[Number(m) - 1]}</span>
+    </button>`;
+  }).join("");
+}
+
+/* ---------------------------------------------------------------- results */
+function sorted(rows) {
+  const copy = rows.slice();
+  const key = state.sort;
+  copy.sort((a, b) => {
+    let x, y;
+    if (key === "tickets") { x = a.tickets || 0; y = b.tickets || 0; }
+    else if (key === "date") { x = (a.date || "9999") + String(a.timeSort).padStart(4, "0"); y = (b.date || "9999") + String(b.timeSort).padStart(4, "0"); }
+    else { x = String(a[key] || "").toLowerCase(); y = String(b[key] || "").toLowerCase(); }
+    if (x < y) return -1 * state.dir;
+    if (x > y) return 1 * state.dir;
+    return a.name.localeCompare(b.name);
+  });
+  return copy;
+}
+
+function rowCard(a) {
+  const [, , d] = (a.date || "--,--,--").split("-");
+  const cat = a.network ? `${a.network} Network` : a.brochure;
+  return `<button type="button" class="row st-${a.status}" data-id="${a.id}">
+    <span class="date-cell">
+      <span class="d num">${a.date ? Number(d) : "&mdash;"}</span>
+      <span class="w">${esc((a.day || "TBC").slice(0, 3))}</span>
+    </span>
+    <span class="row-body">
+      <span class="row-title">${esc(a.name)}</span>
+      <span class="row-meta">
+        <span>${esc(a.time || "Time TBC")}</span>
+        <span>${a.format === "Online" ? "Online" : esc(a.venue || a.location || "Venue TBC")}</span>
+        ${a.tickets ? `<span class="num">${a.tickets} tickets</span>` : ""}
+      </span>
+      <span class="row-tags">
+        <span class="pill pill-type">${esc(a.type || "Activity")}</span>
+        ${cat ? `<span class="pill pill-cat">${esc(cat)}</span>` : ""}
+        ${a.cpd === "Yes" ? `<span class="pill pill-cpd">CPD bundle</span>` : ""}
+      </span>
+    </span>
+    <span class="row-side">
+      <span class="pill pill-${a.status}">${esc(STATUS_TEXT[a.status] || a.status)}</span>
+      ${a.session ? `<span class="tickets">Session <b>${a.session} of ${a.parts}</b></span>` : ""}
+    </span>
+  </button>`;
+}
+
+const COLUMNS = [
+  { key: "date", label: "Date", cls: "t-date", cell: (a) => ukDate(a.date) },
+  { key: "day", label: "Day", cls: "t-dim", cell: (a) => a.day },
+  { key: "time", label: "Time", cls: "t-dim", cell: (a) => a.time },
+  { key: "name", label: "Activity", cls: "t-name", cell: (a) => esc(a.name) },
+  { key: "type", label: "Type", cls: "", cell: (a) => a.type },
+  { key: "format", label: "Location", cls: "t-dim", cell: (a) => a.format === "Online" ? "Online" : (a.location || "TBC") },
+  { key: "tickets", label: "Tickets", cls: "t-num", cell: (a) => a.tickets == null ? "&mdash;" : a.tickets },
+  { key: "brochure", label: "Brochure category", cls: "t-dim", cell: (a) => a.brochure },
+  { key: "pd", label: "PD category", cls: "t-dim", cell: (a) => a.pd },
+  { key: "status", label: "Status", cls: "", cell: (a) => `<span class="pill pill-${a.status}">${esc(STATUS_TEXT[a.status] || a.status)}</span>` },
+  { key: "workflows", label: "Workflows", cls: "t-dim", cell: (a) => a.workflows || "&mdash;" },
+];
+
+function renderResults(rows) {
+  const target = $("#results");
+  if (!rows.length) {
+    target.innerHTML = `<div class="empty">
+      <h3>Nothing matches those filters</h3>
+      <p>Try clearing a filter or widening your search.</p>
+    </div>`;
+    return;
+  }
+
+  if (state.view === "table") {
+    const head = COLUMNS.map((c) => {
+      const on = state.sort === c.key;
+      return `<th class="sortable ${c.cls}" data-sort="${c.key}" aria-sort="${on ? (state.dir === 1 ? "ascending" : "descending") : "none"}">
+        ${esc(c.label)} <span class="arrow">${on ? (state.dir === 1 ? "▲" : "▼") : "△"}</span></th>`;
+    }).join("");
+    const body = sorted(rows).map((a) => `<tr data-id="${a.id}">${
+      COLUMNS.map((c) => `<td class="${c.cls}">${c.cell(a) == null || c.cell(a) === "" ? "&mdash;" : (c.key === "name" || c.key === "status" ? c.cell(a) : esc(c.cell(a)))}</td>`).join("")
+    }</tr>`).join("");
+    target.innerHTML = `<div class="table-wrap"><table><thead><tr>${head}</tr></thead><tbody>${body}</tbody></table></div>`;
+    return;
+  }
+
+  const groups = new Map();
+  sorted(rows).forEach((a) => {
+    const key = a.month || "tbc";
+    if (!groups.has(key)) groups.set(key, { label: a.monthLabel, items: [] });
+    groups.get(key).items.push(a);
+  });
+
+  target.innerHTML = [...groups.entries()].map(([key, group]) => `
+    <section class="month-group">
+      <div class="month-rule">
+        <h2>${esc(group.label)}</h2>
+        <span class="n">${group.items.length} ${group.items.length === 1 ? "activity" : "activities"}</span>
+      </div>
+      <div class="rows">${group.items.map(rowCard).join("")}</div>
+    </section>`).join("");
+}
+
+/* ----------------------------------------------------------------- chips */
+function renderChips() {
+  const chips = [];
+  FACETS.forEach((facet) => {
+    state.sel[facet.id].forEach((value) => {
+      const label = facet.custom ? FLAGS[value].label : (facet.render ? facet.render(value) : value);
+      chips.push(`<button class="chip" type="button" data-drop="${facet.id}" data-value="${esc(value)}">${esc(label)}<span class="x">&times;</span></button>`);
+    });
+  });
+  state.months.forEach((m) => {
+    const [y, mm] = m.split("-");
+    chips.push(`<button class="chip" type="button" data-drop="months" data-value="${m}">${MONTH_SHORT[Number(mm) - 1]} ${y}<span class="x">&times;</span></button>`);
+  });
+  $("#chips").innerHTML = chips.join("");
+}
+
+/* ---------------------------------------------------------------- render */
+function render() {
+  const rows = filtered();
+  renderFacets();
+  renderStats(rows);
+  renderMonths(rows);
+  renderChips();
+  renderResults(rows);
+
+  const total = ACTIVITIES.length;
+  const distinct = rows.filter((a) => a.counts).length;
+  $("#count").innerHTML = rows.length === total
+    ? `<strong>${total}</strong> sessions &middot; <strong>${distinct}</strong> distinct activities`
+    : `<strong>${rows.length}</strong> of ${total} sessions &middot; <strong>${distinct}</strong> distinct activities`;
+  $("#qClear").hidden = !state.q;
+  writeHash();
+}
+
+/* --------------------------------------------------------------- details */
+let lastFocus = null;
+
+function openPanel(id) {
+  const a = ACTIVITIES.find((x) => x.id === id);
+  if (!a) return;
+  lastFocus = document.activeElement;
+
+  const siblings = a.parts > 0 ? ACTIVITIES.filter((x) => x.key === a.key).sort((x, y) => (x.session || 0) - (y.session || 0)) : [];
+  const rowsHtml = (pairs) => `<dl class="dl">${pairs.filter((p) => p[1]).map(
+    ([k, v, cls]) => `<dt>${esc(k)}</dt><dd class="${cls || ""}">${cls === "mono" ? esc(v) : v}</dd>`).join("")}</dl>`;
+
+  $("#panelTitle").textContent = a.name;
+  $("#panelBody").innerHTML = `
+    <div class="panel-pills">
+      <span class="pill pill-${a.status}">${esc(STATUS_TEXT[a.status] || a.status)}</span>
+      <span class="pill pill-type">${esc(a.type || "Activity")}</span>
+      <span class="pill pill-cat">${esc(a.rp)}</span>
+      ${a.cpd === "Yes" ? `<span class="pill pill-cpd">CPD bundle</span>` : ""}
+    </div>
+
+    ${a.summary ? `<p class="panel-summary">${esc(a.summary)}</p>` : ""}
+
+    ${rowsHtml([
+      ["When", `${esc(longDate(a.date, a.day))}${a.time ? `<br>${esc(a.time)}` : ""}`],
+      ["Where", a.format === "Online" ? "Online" : esc(a.location || "Venue TBC")],
+      ["Tickets", a.tickets == null ? "" : `<span class="num">${a.tickets}</span>`],
+      ["Brochure", esc(a.brochure)],
+      ["PD category", esc(a.pd)],
+      ["Network", esc(a.network)],
+      ["Mailing list", esc((a.mailing || []).join(" &middot; ")).replace(/&amp;middot;/g, "&middot;")],
+      ["CPD bundle", esc(a.cpd)],
+      ["Workflows", a.workflows === "Yes" ? "Configured" : `<span style="color:var(--rust);font-weight:600">Not configured</span>`],
+    ])}
+
+    ${a.notes ? `<div class="panel-block"><span class="eyebrow">Notes</span><p class="note">${esc(a.notes)}</p></div>` : ""}
+
+    ${siblings.length > 1 ? `<div class="panel-block">
+      <span class="eyebrow">Programme sessions</span>
+      <div class="siblings">${siblings.map((s) => `
+        <button type="button" class="sibling ${s.id === a.id ? "is-current" : ""}" data-id="${s.id}">
+          <span class="s-n">${s.session ? "S" + s.session : "—"}</span>
+          <span>${esc(s.stem === s.name ? s.name : "Session " + (s.session || "?"))}</span>
+          <span class="s-d num">${esc(ukDate(s.date))}</span>
+        </button>`).join("")}</div>
+    </div>` : ""}
+
+    <div class="panel-block">
+      <span class="eyebrow">HubSpot list tags</span>
+      ${rowsHtml([
+        ["Registered", a.tags.registered, "mono"],
+        ["Attended", a.tags.attended, "mono"],
+        ["Activity type", a.tags.type, "mono"],
+        ["PD category", a.tags.pd, "mono"],
+        ["Network", a.tags.network, "mono"],
+      ])}
+    </div>
+
+    ${a.url ? `<div class="panel-block"><a class="panel-link" href="${esc(a.url)}" target="_blank" rel="noopener">
+      View course page
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true">
+        <path d="M7 17L17 7M9 7h8v8"></path></svg>
+    </a></div>` : `<div class="panel-block"><p style="color:var(--muted);font-size:13.5px;margin:0">No website page linked yet.</p></div>`}`;
+
+  $("#panel").classList.add("is-open");
+  $("#scrim").classList.add("is-open");
+  $("#panel").focus();
+}
+
+function closePanel() {
+  $("#panel").classList.remove("is-open");
+  $("#scrim").classList.remove("is-open");
+  if (lastFocus) lastFocus.focus();
+}
+
+/* ------------------------------------------------------------------- csv */
+function exportCsv() {
+  const rows = sorted(filtered());
+  const head = ["Event Name", "Activity Date", "Day", "Time", "Brochure Category", "Location",
+    "Tickets", "Activity Type", "PD Category", "Network", "Mailing List", "CPD Bundle",
+    "Workflows", "Status", "Reporting Period", "Notes", "Website URL", "Short Description"];
+  const cell = (v) => `"${String(v == null ? "" : v).replace(/"/g, '""')}"`;
+  const body = rows.map((a) => [a.name, ukDate(a.date), a.day, a.time, a.brochure, a.location,
+    a.tickets, a.type, a.pd, a.network, (a.mailing || []).join("; "), a.cpd, a.workflows,
+    STATUS_TEXT[a.status], a.rp, a.notes, a.url, a.summary].map(cell).join(","));
+
+  const csv = BOM + [head.map(cell).join(","), ...body].join(EOL);
+  const stamp = new Date().toISOString().slice(0, 10);
+  saveFile("sph-activities-" + stamp, csv);
+}
+
+// Published on claude.ai the page must hand the file to the viewer through the
+// downloads capability; opened as a local file it uses an ordinary blob link.
+let downloadsApi = null;
+if (window.claude && typeof window.claude.use === "function") {
+  window.claude.use("downloads").then((api) => { downloadsApi = api; }).catch(() => {});
+}
+
+async function saveFile(stem, text) {
+  if (downloadsApi) {
+    try {
+      await downloadsApi.save({ filename: stem + ".csv", data: text });
+      return;
+    } catch (err) {
+      const code = err && err.code;
+      if (code === "declined" || code === "rate_limited") return;
+      if (code === "extension_not_enabled") {
+        // CSV is not enabled for this viewer; offer the same data as text.
+        try {
+          await downloadsApi.save({ filename: stem + ".csv.txt", data: text });
+          return;
+        } catch (retry) {
+          return;
+        }
+      }
+      // Anything else: fall through to the blob link below.
+    }
+  }
+
+  const blob = new Blob([text], { type: "text/csv;charset=utf-8" });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement("a");
+  link.href = url;
+  link.download = stem + ".csv";
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
+}
+
+
+/* -------------------------------------------------------- shareable state */
+function writeHash() {
+  const parts = [];
+  if (state.q) parts.push("q=" + encodeURIComponent(state.q));
+  FACETS.forEach((f) => { if (state.sel[f.id].size) parts.push(f.id + "=" + [...state.sel[f.id]].map(encodeURIComponent).join("|")); });
+  if (state.months.size) parts.push("months=" + [...state.months].join("|"));
+  if (state.hideLater) parts.push("once=1");
+  if (state.view !== "schedule") parts.push("view=" + state.view);
+  const hash = parts.join("&");
+  try {
+    history.replaceState(null, "", hash ? "#" + hash : location.pathname + location.search);
+  } catch (err) {
+    // Sandboxed or opaque origin: shareable links are unavailable, filters still work.
+  }
+}
+
+function readHash() {
+  const hash = location.hash.replace(/^#/, "");
+  if (!hash) return;
+  hash.split("&").forEach((pair) => {
+    const [key, raw = ""] = pair.split("=");
+    const value = decodeURIComponent(raw);
+    if (key === "q") state.q = value.toLowerCase();
+    else if (key === "months") value.split("|").forEach((v) => state.months.add(v));
+    else if (key === "once") state.hideLater = value === "1";
+    else if (key === "view") state.view = value === "table" ? "table" : "schedule";
+    else if (state.sel[key]) value.split("|").forEach((v) => state.sel[key].add(decodeURIComponent(v)));
+  });
+  $("#q").value = state.q;
+  document.querySelectorAll(".segmented button").forEach((b) =>
+    b.setAttribute("aria-pressed", String(b.dataset.view === state.view)));
+}
+
+/* -------------------------------------------------------------- listeners */
+$("#q").addEventListener("input", (e) => { state.q = e.target.value.trim().toLowerCase(); render(); });
+$("#qClear").addEventListener("click", () => { state.q = ""; $("#q").value = ""; $("#q").focus(); render(); });
+
+$("#facets").addEventListener("change", (e) => {
+  const input = e.target;
+  if (input.id === "hideLater") { state.hideLater = input.checked; render(); return; }
+  const facet = input.dataset.facet;
+  if (!facet) return;
+  const set = state.sel[facet];
+  input.checked ? set.add(input.value) : set.delete(input.value);
+  render();
+});
+
+$("#bars").addEventListener("click", (e) => {
+  const bar = e.target.closest(".bar");
+  if (!bar) return;
+  state.months.has(bar.dataset.month) ? state.months.delete(bar.dataset.month) : state.months.add(bar.dataset.month);
+  render();
+});
+
+$("#chips").addEventListener("click", (e) => {
+  const chip = e.target.closest(".chip");
+  if (!chip) return;
+  if (chip.dataset.drop === "months") state.months.delete(chip.dataset.value);
+  else state.sel[chip.dataset.drop].delete(chip.dataset.value);
+  render();
+});
+
+$("#stats").addEventListener("click", (e) => {
+  const stat = e.target.closest("[data-stat]");
+  if (!stat) return;
+  const map = {
+    online: () => toggle("format", "Online"),
+    f2f: () => toggle("format", "Face-to-face"),
+    live: () => toggle("status", "live"),
+    noflow: () => toggle("flags", "noflow"),
+  };
+  map[stat.dataset.stat]?.();
+  render();
+});
+
+function toggle(facet, value) {
+  const set = state.sel[facet];
+  set.has(value) ? set.delete(value) : set.add(value);
+}
+
+$("#results").addEventListener("click", (e) => {
+  const hit = e.target.closest("[data-id]");
+  if (hit) openPanel(hit.dataset.id);
+});
+
+$("#results").addEventListener("click", (e) => {
+  const th = e.target.closest("th[data-sort]");
+  if (!th) return;
+  const key = th.dataset.sort;
+  if (state.sort === key) state.dir *= -1;
+  else { state.sort = key; state.dir = 1; }
+  render();
+}, true);
+
+document.querySelectorAll(".segmented button").forEach((btn) => {
+  btn.addEventListener("click", () => {
+    state.view = btn.dataset.view;
+    state.sort = state.view === "table" ? state.sort : "date";
+    document.querySelectorAll(".segmented button").forEach((b) =>
+      b.setAttribute("aria-pressed", String(b === btn)));
+    render();
+  });
+});
+
+$("#panelBody").addEventListener("click", (e) => {
+  const sib = e.target.closest(".sibling");
+  if (sib) openPanel(sib.dataset.id);
+});
+
+$("#panelClose").addEventListener("click", closePanel);
+$("#scrim").addEventListener("click", closePanel);
+document.addEventListener("keydown", (e) => {
+  if (e.key === "Escape") closePanel();
+  if (e.key === "/" && document.activeElement !== $("#q")) { e.preventDefault(); $("#q").focus(); }
+});
+
+$("#resetBtn").addEventListener("click", () => {
+  state.q = "";
+  $("#q").value = "";
+  state.months.clear();
+  state.hideLater = false;
+  FACETS.forEach((f) => state.sel[f.id].clear());
+  render();
+});
+
+$("#exportBtn").addEventListener("click", exportCsv);
+
+$("#railToggle").addEventListener("click", () => {
+  const rail = $("#rail");
+  const open = rail.hasAttribute("hidden");
+  open ? rail.removeAttribute("hidden") : rail.setAttribute("hidden", "");
+  $("#railToggle").setAttribute("aria-expanded", String(open));
+});
+
+$("#themeBtn").addEventListener("click", () => {
+  const current = document.documentElement.getAttribute("data-theme");
+  const dark = current
+    ? current === "dark"
+    : matchMedia("(prefers-color-scheme: dark)").matches;
+  const next = dark ? "light" : "dark";
+  document.documentElement.setAttribute("data-theme", next);
+  try { localStorage.setItem("sph-theme", next); } catch (err) { /* storage blocked */ }
+});
+
+/* ------------------------------------------------------------------- boot */
+try {
+  const saved = localStorage.getItem("sph-theme");
+  if (saved) document.documentElement.setAttribute("data-theme", saved);
+} catch (err) { /* storage blocked */ }
+
+if (matchMedia("(max-width: 1080px)").matches) $("#rail").setAttribute("hidden", "");
+
+$("#srcName").textContent = DATA.source;
+$("#genDate").textContent = DATA.generated;
+readHash();
+render();
+</script>
