@@ -3,6 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow, noarchive">
 <title>SPH Activity Planner</title>
 <meta name="description" content="View and filter every Bristol &amp; Beyond Stronger Practice Hub activity running in 2026-2027.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -357,7 +358,6 @@ button.stat:hover { background: var(--surface-2); }
 .stat .k { font-size: 12px; color: var(--muted); }
 .stat .sub { font-size: 11.5px; color: var(--muted); font-family: var(--mono); }
 .stat.accent .v { color: var(--brand-ink); }
-.stat.warn .v { color: var(--rust); }
 .stat.good .v { color: var(--live); }
 
 /* ------------------------------------------------------------ month strip */
@@ -801,9 +801,9 @@ td.t-dim { color: var(--muted); }
 </div>
 
 <footer class="foot">
-  <span>Source: <strong id="srcName"></strong></span>
-  <span>Built <span id="genDate"></span></span>
-  <span>Bristol &amp; Beyond Stronger Practice Hub</span>
+  <span>Data updated <span id="genDate"></span></span>
+  <span>&copy; <span id="year"></span> Bristol &amp; Beyond Stronger Practice Hub</span>
+  <span>Dashboard by <a href="https://chaoscreated.co.uk" target="_blank" rel="noopener">Chaos Created</a></span>
 </footer>
 
 <div class="scrim" id="scrim"></div>
@@ -864,7 +864,6 @@ const FACETS = [
 const FLAGS = {
   cpd:       { label: "CPD bundle", test: (a) => a.cpd === "Yes" },
   multipart: { label: "Multi-part programme", test: (a) => a.parts > 0 },
-  noflow:    { label: "Workflows not configured", test: (a) => a.workflows !== "Yes" },
   nourl:     { label: "No website link", test: (a) => !a.url },
   tbc:       { label: "Venue or time to confirm", test: (a) => a.format === "Venue TBC" || a.time === "TO ADD" },
 };
@@ -974,7 +973,6 @@ function renderStats(rows) {
   const f2f = rows.filter((a) => a.format === "Face-to-face").length;
   const capacity = rows.reduce((sum, a) => sum + (a.tickets || 0), 0);
   const live = rows.filter((a) => a.status === "live").length;
-  const noflow = rows.filter((a) => a.workflows !== "Yes").length;
 
   const card = (cls, value, key, sub, action) => `
     <${action ? "button" : "div"} class="stat ${cls}" ${action ? `type="button" data-stat="${action}"` : ""}>
@@ -989,7 +987,6 @@ function renderStats(rows) {
     card("", f2f, "Face-to-face", f2f ? `${new Set(rows.filter((a) => a.venue).map((a) => a.venue)).size} venues` : "&mdash;", "f2f"),
     card("", capacity.toLocaleString("en-GB"), "Ticket capacity", "across all sessions"),
     card("good", live, "Live on website", `${rows.length - live} still to publish`, "live"),
-    card(noflow ? "warn" : "good", noflow, "Workflows to set up", noflow ? "needs HubSpot config" : "all configured", "noflow"),
   ].join("");
 }
 
@@ -1349,7 +1346,6 @@ $("#stats").addEventListener("click", (e) => {
     online: () => toggle("format", "Online"),
     f2f: () => toggle("format", "Face-to-face"),
     live: () => toggle("status", "live"),
-    noflow: () => toggle("flags", "noflow"),
   };
   map[stat.dataset.stat]?.();
   render();
@@ -1432,8 +1428,8 @@ try {
 
 if (matchMedia("(max-width: 1080px)").matches) $("#rail").setAttribute("hidden", "");
 
-$("#srcName").textContent = DATA.source;
 $("#genDate").textContent = DATA.generated;
+$("#year").textContent = DATA.year;
 readHash();
 render();
 </script>

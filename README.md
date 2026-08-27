@@ -3,12 +3,23 @@
 A dashboard for the Bristol & Beyond Stronger Practice Hub team to view and filter
 every activity running in 2026–2027.
 
-**Live site: https://alimaggs.github.io/SPH-Dashboard/**
-
 The build reads `Data/2026-2027 SPH Activity Master List.xlsx` and produces one
-self-contained HTML file at `docs/index.html` — no server, no build tooling, no
-internet dependency except web fonts. GitHub Pages serves that file; you can also
-open it locally, email it, or drop it on a shared drive.
+self-contained HTML file at `public/index.html` — no server, no build tooling, no
+internet dependency except web fonts. Sevalla serves that file; you can also open
+it locally, email it, or drop it on a shared drive.
+
+## Deploying
+
+The site is hosted as a **Sevalla static site** connected to this repo:
+
+| Setting | Value |
+|---|---|
+| Build command | *(leave empty)* |
+| Publish directory | `public` |
+
+`public/index.html` is committed to the repo already built, so Sevalla needs no
+build step and no Python in its build image. Every push to `main` triggers a
+redeploy.
 
 ## Rebuilding after the spreadsheet changes
 
@@ -17,24 +28,24 @@ python scripts/build_dashboard.py
 ```
 
 Requires `openpyxl` (`pip install -r requirements.txt`). Output lands in
-`docs/index.html`. The script prints the row count so you can sanity-check it
-against the workbook.
+`public/`. The script prints the row count so you can sanity-check it against
+the workbook.
 
 ```
 Data/…xlsx  ─┐
-             ├─ scripts/build_dashboard.py ──▶ docs/index.html
-src/dashboard.template.html ─┘
+             ├─ scripts/build_dashboard.py ──▶ public/index.html
+src/dashboard.template.html ─┘                        public/robots.txt
 ```
 
 Edit `src/dashboard.template.html` to change the dashboard itself; never edit
-`docs/index.html`, it is overwritten on every build.
+anything in `public/`, it is overwritten on every build.
 
 ## Publishing an update
 
 **The easy way, no software needed.** On GitHub, open the `Data` folder, use
 *Add file → Upload files* to drop in the new spreadsheet, and commit. A GitHub
-Action rebuilds `docs/index.html` and Pages redeploys it a minute or two later.
-Watch it run under the repo's *Actions* tab.
+Action rebuilds `public/` and commits it back; Sevalla then redeploys within a
+minute or two. Watch the rebuild under the repo's *Actions* tab.
 
 The upload does not have to keep the exact filename — the build uses the most
 recently modified `.xlsx` in `Data/` if the expected name is missing. Do delete
@@ -51,6 +62,17 @@ git push
 
 Either way the URL never changes, so a link you have shared with the team keeps
 working.
+
+## Keeping it out of search results
+
+The dashboard is not meant to be found by the public. Two measures ship with the
+build: a `noindex, nofollow, noarchive` meta tag in the page, and
+`public/robots.txt` disallowing all crawlers.
+
+Both are requests, which well-behaved crawlers honour and others ignore. If the
+content genuinely must not be seen, put it behind Sevalla's password protection
+rather than relying on these. Adding an `X-Robots-Tag: noindex` response header
+in Sevalla is a further belt-and-braces step.
 
 ### If the Action fails to push
 

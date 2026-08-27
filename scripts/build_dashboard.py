@@ -25,8 +25,9 @@ ROOT = Path(__file__).resolve().parent.parent
 DATA_DIR = ROOT / "Data"
 LOGO = ROOT / "Design Assets" / "Bristol and Beyond SPH Early Years Logo Medium - Transparent.png"
 TEMPLATE = ROOT / "src" / "dashboard.template.html"
-# GitHub Pages serves this repo from /docs on main.
-OUTPUT = ROOT / "docs" / "index.html"
+# Sevalla serves this directory as the static site's publish directory.
+PUBLIC = ROOT / "public"
+OUTPUT = PUBLIC / "index.html"
 
 # Reporting period date ranges, per the master list reference document.
 PERIODS = {
@@ -268,7 +269,7 @@ def build() -> None:
     rows = read_rows()
     payload = {
         "generated": datetime.now().strftime("%d %B %Y"),
-        "source": find_workbook().name,
+        "year": datetime.now().year,
         "periods": [
             {"id": key, "tag": tag, "from": start, "to": end}
             for key, (tag, start, end) in PERIODS.items()
@@ -288,6 +289,11 @@ def build() -> None:
 
     OUTPUT.parent.mkdir(parents=True, exist_ok=True)
     OUTPUT.write_text(html, encoding="utf-8")
+
+    # Keep the dashboard out of search results. The page also carries a
+    # noindex meta tag, since a host may serve robots.txt inconsistently.
+    (PUBLIC / "robots.txt").write_text(
+        "User-agent: *\nDisallow: /\n", encoding="utf-8")
 
     counted = sum(1 for r in rows if r["counts"])
     size = OUTPUT.stat().st_size / 1024

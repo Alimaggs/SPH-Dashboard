@@ -1,8 +1,8 @@
 name: Build dashboard
 
-# Rebuilds docs/index.html whenever the spreadsheet or the page source changes,
+# Rebuilds public/ whenever the spreadsheet or the page source changes,
 # including spreadsheets uploaded through the GitHub website, and commits the
-# result back so GitHub Pages redeploys it.
+# result back. Sevalla redeploys the static site on that push.
 on:
   push:
     branches: [main]
@@ -39,12 +39,12 @@ jobs:
 
       - name: Commit the rebuilt dashboard
         run: |
-          if git diff --quiet -- docs/index.html; then
+          if git diff --quiet -- public; then
             echo "Dashboard is already up to date."
             exit 0
           fi
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add docs/index.html
+          git add public
           git commit -m "Rebuild dashboard from ${GITHUB_SHA:0:7}"
           git push
