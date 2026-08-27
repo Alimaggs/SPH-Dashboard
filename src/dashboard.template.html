@@ -695,8 +695,23 @@ td.t-dim { color: var(--muted); }
 }
 
 .foot .by { display: inline-flex; align-items: center; gap: 8px; }
-.foot .by a { display: inline-flex; align-items: center; border-radius: 3px; }
-.cc { height: 22px; width: auto; display: block; }
+
+/* The mark is drawn as a background so the artwork is embedded once in the
+   stylesheet and shared by the header and the footer, rather than carried
+   twice as inline data URIs. */
+.cc-link { display: inline-flex; align-items: center; border-radius: 3px; }
+
+.cc {
+  display: block;
+  height: 22px;
+  aspect-ratio: 61 / 22;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
+}
+
+.cc-light { background-image: url("__CC_COLOUR__"); }
+.cc-dark { background-image: url("__CC_WHITE__"); }
 
 /* One artwork per theme. Light is the default, so the white mark stays hidden
    until a dark theme resolves, in either of the two ways it can. */
@@ -709,6 +724,13 @@ td.t-dim { color: var(--muted); }
 
 :root[data-theme="dark"] .cc-light { display: none; }
 :root[data-theme="dark"] .cc-dark { display: block; }
+
+/* Separates the agency credit from the dashboard's own controls. */
+.cc-head {
+  margin-left: 4px;
+  padding-left: 12px;
+  border-left: 1px solid var(--line);
+}
 
 .rail-toggle { display: none; }
 
@@ -735,6 +757,7 @@ td.t-dim { color: var(--muted); }
   .brand-icon { height: 32px; }
   .brand-text h1 { font-size: 17px; }
   .brand-text p { display: none; }
+  .cc-head { display: none; }
   .shell { padding: 16px 16px 48px; gap: 16px; }
   .foot { padding: 0 16px 32px; }
   .row { grid-template-columns: 48px minmax(0, 1fr); gap: 12px; }
@@ -763,7 +786,7 @@ td.t-dim { color: var(--muted); }
       <img class="brand-icon" src="__SPH_ICON__" alt="Bristol &amp; Beyond Stronger Practice Hub">
       <div class="brand-text">
         <h1>SPH Activity Dashboard</h1>
-        <p>Everything we're running in 2026&ndash;2027</p>
+        <p>Powered by Chaos Canvas by Chaos Created</p>
       </div>
     </div>
 
@@ -783,6 +806,10 @@ td.t-dim { color: var(--muted); }
           <path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"></path>
         </svg>
       </button>
+      <a class="cc-link cc-head" href="https://chaoscreated.co.uk" target="_blank" rel="noopener" aria-label="Chaos Created">
+        <span class="cc cc-light" aria-hidden="true"></span>
+        <span class="cc cc-dark" aria-hidden="true"></span>
+      </a>
     </div>
   </div>
 </header>
@@ -824,9 +851,9 @@ td.t-dim { color: var(--muted); }
   <span>Data updated <span id="genDate"></span></span>
   <span>&copy; <span id="year"></span> Bristol &amp; Beyond Stronger Practice Hub</span>
   <span class="by">Dashboard by
-    <a href="https://chaoscreated.co.uk" target="_blank" rel="noopener" aria-label="Chaos Created">
-      <img class="cc cc-light" src="__CC_COLOUR__" alt="Chaos Created">
-      <img class="cc cc-dark" src="__CC_WHITE__" alt="Chaos Created">
+    <a class="cc-link" href="https://chaoscreated.co.uk" target="_blank" rel="noopener" aria-label="Chaos Created">
+      <span class="cc cc-light" aria-hidden="true"></span>
+      <span class="cc cc-dark" aria-hidden="true"></span>
     </a>
   </span>
 </footer>
