@@ -31,7 +31,16 @@ Edit `src/dashboard.template.html` to change the dashboard itself; never edit
 
 ## Publishing an update
 
-Update the spreadsheet, rebuild, then commit and push:
+**The easy way, no software needed.** On GitHub, open the `Data` folder, use
+*Add file → Upload files* to drop in the new spreadsheet, and commit. A GitHub
+Action rebuilds `docs/index.html` and Pages redeploys it a minute or two later.
+Watch it run under the repo's *Actions* tab.
+
+The upload does not have to keep the exact filename — the build uses the most
+recently modified `.xlsx` in `Data/` if the expected name is missing. Do delete
+the old one afterwards, so it is obvious which list is live.
+
+**Locally**, if you have Python:
 
 ```bash
 python scripts/build_dashboard.py
@@ -40,8 +49,14 @@ git commit -m "Update activity list"
 git push
 ```
 
-GitHub Pages redeploys within a minute or so. The URL never changes, so a link
-you have shared with the team keeps working.
+Either way the URL never changes, so a link you have shared with the team keeps
+working.
+
+### If the Action fails to push
+
+It needs write access to the repo. Check *Settings → Actions → General →
+Workflow permissions* is set to **Read and write permissions** — that setting is
+a ceiling the workflow cannot raise on its own.
 
 ## What the dashboard does
 

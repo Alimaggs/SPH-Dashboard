@@ -15,13 +15,14 @@ import base64
 import json
 import re
 import sys
+from functools import lru_cache
 from datetime import date, datetime
 from pathlib import Path
 
 import openpyxl
 
 ROOT = Path(__file__).resolve().parent.parent
-WORKBOOK = ROOT / "Data" / "2026-2027 SPH Activity Master List.xlsx"
+DATA_DIR = ROOT / "Data"
 LOGO = ROOT / "Design Assets" / "Bristol and Beyond SPH Early Years Logo Medium - Transparent.png"
 TEMPLATE = ROOT / "src" / "dashboard.template.html"
 # GitHub Pages serves this repo from /docs on main.
@@ -73,6 +74,28 @@ VENUE_ALIASES = {
 
 MONTHS = ["January", "February", "March", "April", "May", "June",
           "July", "August", "September", "October", "November", "December"]
+
+
+@lru_cache(maxsize=1)
+def find_workbook() -> Path:
+    """Locate the master list, tolerating a renamed file.
+
+    The spreadsheet is often replaced by uploading a new one through the
+    GitHub website, where the name may not match exactly.
+    """
+    preferred = DATA_DIR / "2026-2027 SPH Activity Master List.xlsx"
+    if preferred.exists():
+        return preferred
+
+    candidates = [f for f in DATA_DIR.glob("*.xlsx") if not f.name.startswith("~$")]
+    if not candidates:
+        sys.exit(f"No .xlsx file found in {DATA_DIR}.")
+
+    newest = max(candidates, key=lambda f: f.stat().st_mtime)
+    if len(candidates) > 1:
+        print(f"note: {len(candidates)} spreadsheets in Data/, using the newest")
+    print(f"reading {newest.name}")
+    return newest
 
 
 def clean(value) -> str:
@@ -131,7 +154,7 @@ def parse_time(value: str) -> tuple[str, int | None]:
 
 
 def read_rows() -> list[dict]:
-    workbook = openpyxl.load_workbook(WORKBOOK)
+    workbook = openpyxl.load_workbook(find_workbook())
     rows: list[dict] = []
 
     for sheet in workbook.worksheets:
@@ -245,7 +268,7 @@ def build() -> None:
     rows = read_rows()
     payload = {
         "generated": datetime.now().strftime("%d %B %Y"),
-        "source": WORKBOOK.name,
+        "source": find_workbook().name,
         "periods": [
             {"id": key, "tag": tag, "from": start, "to": end}
             for key, (tag, start, end) in PERIODS.items()

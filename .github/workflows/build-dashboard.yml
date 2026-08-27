@@ -1,0 +1,50 @@
+name: Build dashboard
+
+# Rebuilds docs/index.html whenever the spreadsheet or the page source changes,
+# including spreadsheets uploaded through the GitHub website, and commits the
+# result back so GitHub Pages redeploys it.
+on:
+  push:
+    branches: [main]
+    paths:
+      - "Data/**"
+      - "Design Assets/**"
+      - "src/**"
+      - "scripts/**"
+      - "requirements.txt"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: build-dashboard
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - run: pip install -r requirements.txt
+
+      - name: Build
+        run: python scripts/build_dashboard.py
+
+      - name: Commit the rebuilt dashboard
+        run: |
+          if git diff --quiet -- docs/index.html; then
+            echo "Dashboard is already up to date."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add docs/index.html
+          git commit -m "Rebuild dashboard from ${GITHUB_SHA:0:7}"
+          git push
