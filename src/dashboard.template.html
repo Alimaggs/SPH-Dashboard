@@ -323,8 +323,8 @@ a { color: var(--brand-ink); }
 .main { display: flex; flex-direction: column; gap: 18px; min-width: 0; }
 
 .stats {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(128px, 1fr));
+  display: flex;
+  flex-wrap: wrap;
   background: var(--surface);
   border: 1px solid var(--line);
   border-radius: var(--radius);
@@ -332,11 +332,14 @@ a { color: var(--brand-ink); }
   box-shadow: var(--shadow);
 }
 
-/* Dividers are drawn per card and clipped at the container edge, so a row
-   that wraps short doesn't leave a stray empty cell showing through. */
+/* Flex, not grid: an odd number of tiles leaves grid with an empty cell that
+   reads as a missing card, whereas flex items stretch to fill the last row.
+   Dividers sit on each tile's leading edges, so the ones at the container's
+   outer edges fall outside the padding box and are clipped away. */
 .stat {
+  flex: 1 1 128px;
   background: var(--surface);
-  box-shadow: 1px 0 0 var(--line), 0 1px 0 var(--line);
+  box-shadow: -1px 0 0 var(--line), 0 -1px 0 var(--line);
   padding: 13px 16px 14px;
   display: flex;
   flex-direction: column;
