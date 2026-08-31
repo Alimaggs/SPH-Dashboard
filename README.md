@@ -202,7 +202,7 @@ detail panel, and a print stylesheet that drops the controls and prints the list
 
 | Dashboard | Source |
 |---|---|
-| Website status | Fill colour on the Event Name cell — green `92D050` Live, blue `00B0F0` built but hidden, yellow `FFFF00` not yet processed, orange `FFA500`/`FFC000` later session |
+| Website status | Fill colour on the Event Name cell — green `92D050` live, purple `7030A0` live but not yet ticketed, blue `00B0F0` built but hidden, yellow `FFFF00` not yet processed, orange `FFA500`/`FFC000` later session |
 | Activity type / PD category / Network | Columns J/K/L with the `AT`/`PD`/`NW` prefix and the `RP…-26-27` suffix stripped for display; the full tag is shown in the detail panel |
 | Format | Derived from Location — `Online`, `TBC` → "Venue TBC", anything else → face-to-face |
 | Day of week | Recomputed from the date, because column C is a formula |

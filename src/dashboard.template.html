@@ -37,6 +37,8 @@
 
   --live: #2f7d52;
   --live-bg: #e2f1e8;
+  --ticketing: #7a4b9e;
+  --ticketing-bg: #f1e8f8;
   --built: #1f6f9c;
   --built-bg: #ddeef8;
   --new: #a9760a;
@@ -78,6 +80,8 @@
 
     --live: #6fc191;
     --live-bg: #14352a;
+    --ticketing: #c9a2e4;
+    --ticketing-bg: #2c1f3c;
     --built: #64b3dd;
     --built-bg: #10303f;
     --new: #e0ab4c;
@@ -114,6 +118,8 @@
 
   --live: #6fc191;
   --live-bg: #14352a;
+  --ticketing: #c9a2e4;
+  --ticketing-bg: #2c1f3c;
   --built: #64b3dd;
   --built-bg: #10303f;
   --new: #e0ab4c;
@@ -333,6 +339,7 @@ a { color: var(--brand-ink); }
 
 .swatch { width: 8px; height: 8px; border-radius: 2px; flex: none; }
 .sw-live { background: var(--live); }
+.sw-ticketing { background: var(--ticketing); }
 .sw-built { background: var(--built); }
 .sw-new { background: var(--new); }
 .sw-later { background: var(--later); }
@@ -526,6 +533,7 @@ button.stat:hover { background: var(--surface-2); }
 }
 .row:hover { border-color: var(--brand-mid); border-left-color: var(--brand); box-shadow: var(--shadow-lift); }
 .row.st-live { border-left-color: var(--live); }
+.row.st-ticketing { border-left-color: var(--ticketing); }
 .row.st-built { border-left-color: var(--built); }
 .row.st-new { border-left-color: var(--new); }
 .row.st-later { border-left-color: var(--later); }
@@ -559,6 +567,7 @@ button.stat:hover { background: var(--surface-2); }
   border: 1px solid transparent;
 }
 .pill-live { background: var(--live-bg); color: var(--live); }
+.pill-ticketing { background: var(--ticketing-bg); color: var(--ticketing); }
 .pill-built { background: var(--built-bg); color: var(--built); }
 .pill-new { background: var(--new-bg); color: var(--new); }
 .pill-later { background: var(--later-bg); color: var(--later); }
@@ -934,9 +943,10 @@ const esc = (s) => String(s == null ? "" : s).replace(/[&<>"']/g, (c) =>
   ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
 
 const MONTH_SHORT = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-const STATUS_ORDER = ["live", "built", "new", "later"];
+const STATUS_ORDER = ["live", "ticketing", "built", "new", "later"];
 const STATUS_TEXT = {
   live: "Live on website",
+  ticketing: "Needs ticketing",
   built: "Built, not public",
   new: "Not yet on website",
   later: "Later session",
@@ -1094,7 +1104,7 @@ function renderStats(rows) {
   const online = rows.filter((a) => a.format === "Online").length;
   const f2f = rows.filter((a) => a.format === "Face-to-face").length;
   const capacity = rows.reduce((sum, a) => sum + (a.tickets || 0), 0);
-  const live = rows.filter((a) => a.status === "live").length;
+  const live = rows.filter((a) => a.status === "live" || a.status === "ticketing").length;
 
   const card = (cls, value, key, sub, action) => `
     <${action ? "button" : "div"} class="stat ${cls}" ${action ? `type="button" data-stat="${action}"` : ""}>

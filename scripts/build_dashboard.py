@@ -50,6 +50,7 @@ STATUS_BY_FILL = {
     "FFFFFF00": ("new", "Not yet on website"),
     "FF00B0F0": ("built", "Built, not public"),
     "FF92D050": ("live", "Live on website"),
+    "FF7030A0": ("ticketing", "Needs ticketing"),
     "FFFFA500": ("later", "Later session"),
     "FFFFC000": ("later", "Later session"),
 }
