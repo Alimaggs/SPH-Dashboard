@@ -13,6 +13,7 @@ from __future__ import annotations
 
 import base64
 import json
+from collections import Counter
 import re
 import sys
 from functools import lru_cache
@@ -71,6 +72,19 @@ MAILING_VOCAB = [
     "EDI",
     "Local",
 ]
+
+# Free-text columns, so fold the expected wording to one spelling and let
+# anything unrecognised through as typed.
+SCOPE_ALIASES = {
+    "regional": "Regional",
+    "local": "Local",
+}
+
+REGISTRATION_ALIASES = {
+    "website": "Website",
+    "external": "External platform",
+    "external platform": "External platform",
+}
 
 # Same physical venue, typed three different ways across rows.
 VENUE_ALIASES = {
@@ -180,6 +194,22 @@ def split_mailing(value: str) -> list[str]:
     return out
 
 
+def as_bool(value) -> bool | None:
+    """Read a checkbox column, whether it arrives as a bool, a word or a formula.
+
+    'Processed for Reports' holds an Excel checkbox, which openpyxl reports as
+    the formula '=FALSE()' unless the cached value is read instead.
+    """
+    if isinstance(value, bool):
+        return value
+    text = clean(value).lower().strip("=()")
+    if text in ("true", "yes", "y", "1"):
+        return True
+    if text in ("false", "no", "n", "0"):
+        return False
+    return None
+
+
 def title_key(name: str) -> str:
     """Normalise a title so sessions of one programme share a key."""
     stem = re.sub(r"\s*[-–]\s*Session\s*[123]\s*$", "", name, flags=re.I)
@@ -201,16 +231,27 @@ def parse_time(value: str) -> tuple[str, int | None]:
 
 def read_rows() -> list[dict]:
     workbook = openpyxl.load_workbook(find_workbook())
+    # A second pass with the formulas evaluated. The first pass has to keep
+    # them, because it is also where the cell fill colours are read from.
+    computed = openpyxl.load_workbook(find_workbook(), data_only=True)
     rows: list[dict] = []
 
     for sheet in workbook.worksheets:
         period = sheet.title.strip().upper()
         headers = [clean(c.value) for c in next(sheet.iter_rows(min_row=1, max_row=1))]
         index = {h: i for i, h in enumerate(headers)}
+        values_sheet = computed[sheet.title]
 
         def cell(row, header):
             position = index.get(header)
             return row[position] if position is not None else None
+
+        def cell_value(row, header):
+            """The evaluated result for a formula cell."""
+            position = index.get(header)
+            if position is None:
+                return None
+            return values_sheet.cell(row=row[0].row, column=position + 1).value
 
         for excel_row in sheet.iter_rows(min_row=2):
             name_cell = cell(excel_row, "Event Name")
@@ -250,6 +291,11 @@ def read_rows() -> list[dict]:
             except (TypeError, ValueError):
                 tickets = None
 
+            scope_cell = cell(excel_row, "Regional/Local")
+            scope = clean(scope_cell.value if scope_cell else None)
+            registration_cell = cell(excel_row, "Registration")
+            registration = clean(registration_cell.value if registration_cell else None)
+
             time_display, time_sort = parse_time(cell(excel_row, "Time").value)
             brochure = clean(cell(excel_row, "Brochure Category").value)
             # 'Working With Babies' and 'Working with Babies' are one group.
@@ -278,6 +324,9 @@ def read_rows() -> list[dict]:
                 "pd": strip_tag(cell(excel_row, "Professional Development Category").value, "PD"),
                 "network": strip_tag(cell(excel_row, "Network").value, "NW"),
                 "mailing": split_mailing(cell(excel_row, "Mailing List Subscriptions").value),
+                "scope": SCOPE_ALIASES.get(scope.lower(), scope),
+                "registration": REGISTRATION_ALIASES.get(registration.lower(), registration),
+                "processed": as_bool(cell_value(excel_row, "Processed for Reports")),
                 "cpd": clean(cell(excel_row, "CPD Bundle for Survey").value),
                 "workflows": clean(cell(excel_row, "Workflows Configured").value),
                 "notes": clean(cell(excel_row, "Notes").value),
@@ -345,6 +394,11 @@ def build() -> None:
     counted = sum(1 for r in rows if r["counts"])
     size = OUTPUT.stat().st_size / 1024
     print(f"{len(rows)} rows -> {counted} distinct activities")
+    for field, label in (("scope", "Regional/Local"),
+                         ("registration", "Registration"),
+                         ("processed", "Processed for Reports")):
+        tally = Counter(r[field] if r[field] != "" else "(blank)" for r in rows)
+        print(f"  {label}: " + ", ".join(f"{v}={n}" for v, n in tally.most_common()))
     print(f"wrote {OUTPUT.relative_to(ROOT)} ({size:.0f} KB)")
 
 

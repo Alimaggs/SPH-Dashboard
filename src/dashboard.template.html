@@ -543,6 +543,10 @@ button.stat:hover { background: var(--surface-2); }
 .pill-type { background: var(--surface-2); color: var(--ink-2); border-color: var(--line); }
 .pill-cat { background: transparent; color: var(--muted); border-color: var(--line); font-weight: 500; }
 .pill-cpd { background: transparent; color: var(--crimson); border-color: var(--crimson); }
+/* Almost every activity is regional and booked on the website, so only the
+   exceptions are badged. */
+.pill-local { background: transparent; color: var(--brand-ink); border-color: var(--brand-mid); }
+.pill-ext { background: transparent; color: var(--rust); border-color: var(--rust); }
 
 .tickets { font-family: var(--mono); font-size: 12px; color: var(--muted); white-space: nowrap; }
 .tickets b { color: var(--ink-2); font-weight: 500; }
@@ -938,12 +942,18 @@ const FACETS = [
   { id: "rp", label: "Reporting period", get: (a) => [a.rp], order: ["RP1", "RP2", "RP3", "RP4"] },
   { id: "type", label: "Activity type", get: (a) => (a.type ? [a.type] : []) },
   { id: "format", label: "Format", get: (a) => [a.format] },
+  { id: "scope", label: "Regional or local", get: (a) => (a.scope ? [a.scope] : []), order: ["Regional", "Local"] },
+  { id: "registration", label: "Registration", get: (a) => (a.registration ? [a.registration] : []) },
   { id: "status", label: "Website status", get: (a) => [a.status], order: STATUS_ORDER, render: (v) => STATUS_TEXT[v] || v, swatch: true },
   { id: "pd", label: "PD category", get: (a) => (a.pd ? [a.pd] : []) },
   { id: "brochure", label: "Brochure category", get: (a) => (a.brochure ? [a.brochure] : []) },
   { id: "network", label: "Network", get: (a) => (a.network ? [a.network] : []) },
   { id: "venue", label: "Venue", get: (a) => (a.venue ? [a.venue] : []) },
   { id: "mailing", label: "Mailing list", get: (a) => a.mailing || [] },
+  // A blank cell means nobody has said either way, so it stays out of the
+  // counts rather than being reported as unprocessed.
+  { id: "processed", label: "Processed for reports", order: ["Processed", "Not processed"],
+    get: (a) => (a.processed == null ? [] : [a.processed ? "Processed" : "Not processed"]) },
   { id: "flags", label: "Needs attention", custom: true },
 ];
 
@@ -968,7 +978,8 @@ FACETS.forEach((f) => (state.sel[f.id] = new Set()));
 function matchesText(a) {
   if (!state.q) return true;
   const hay = [a.name, a.summary, a.notes, a.location, a.venue, a.brochure, a.pd,
-               a.network, a.type, (a.mailing || []).join(" "), a.day, a.time]
+               a.network, a.type, (a.mailing || []).join(" "), a.day, a.time,
+               a.scope, a.registration]
     .join(" ").toLowerCase();
   return state.q.split(/\s+/).every((t) => hay.includes(t));
 }
@@ -1135,6 +1146,8 @@ function rowCard(a) {
         <span class="pill pill-type">${esc(a.type || "Activity")}</span>
         ${cat ? `<span class="pill pill-cat">${esc(cat)}</span>` : ""}
         ${a.cpd === "Yes" ? `<span class="pill pill-cpd">CPD bundle</span>` : ""}
+        ${a.scope === "Local" ? `<span class="pill pill-local">Local</span>` : ""}
+        ${a.registration && a.registration !== "Website" ? `<span class="pill pill-ext">${esc(a.registration)}</span>` : ""}
       </span>
     </span>
     <span class="row-side">
@@ -1156,6 +1169,10 @@ const COLUMNS = [
   { key: "pd", label: "PD category", cls: "t-dim", cell: (a) => a.pd },
   { key: "status", label: "Status", cls: "", cell: (a) => `<span class="pill pill-${a.status}">${esc(STATUS_TEXT[a.status] || a.status)}</span>` },
   { key: "workflows", label: "Workflows", cls: "t-dim", cell: (a) => a.workflows || "&mdash;" },
+  { key: "scope", label: "Regional/local", cls: "t-dim", cell: (a) => a.scope },
+  { key: "registration", label: "Registration", cls: "t-dim", cell: (a) => a.registration },
+  { key: "processed", label: "Reports", cls: "t-dim",
+    cell: (a) => (a.processed == null ? "" : (a.processed ? "Processed" : "Not processed")) },
 ];
 
 function renderResults(rows) {
@@ -1263,6 +1280,8 @@ function openPanel(id) {
     ${rowsHtml([
       ["When", `${esc(longDate(a.date, a.day))}${a.time ? `<br>${esc(a.time)}` : ""}`],
       ["Where", a.format === "Online" ? "Online" : esc(a.location || "Venue TBC")],
+      ["Reach", esc(a.scope)],
+      ["Registration", esc(a.registration)],
       ["Tickets", a.tickets == null ? "" : `<span class="num">${a.tickets}</span>`],
       ["Brochure", esc(a.brochure)],
       ["PD category", esc(a.pd)],
@@ -1270,6 +1289,7 @@ function openPanel(id) {
       ["Mailing list", esc((a.mailing || []).join(" &middot; ")).replace(/&amp;middot;/g, "&middot;")],
       ["CPD bundle", esc(a.cpd)],
       ["Workflows", a.workflows === "Yes" ? "Configured" : `<span style="color:var(--rust);font-weight:600">Not configured</span>`],
+      ["Reports", a.processed == null ? "" : (a.processed ? "Processed" : "Not processed")],
     ])}
 
     ${a.notes ? `<div class="panel-block"><span class="eyebrow">Notes</span><p class="note">${esc(a.notes)}</p></div>` : ""}

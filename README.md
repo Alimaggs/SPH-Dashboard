@@ -177,11 +177,15 @@ a ceiling the workflow cannot raise on its own.
 sortable by any column). Click any activity for the full record: description,
 notes, tickets, every HubSpot tag, and a link to the course page.
 
-**Filters** — reporting period, activity type, format, website status, PD
-category, brochure category, network, venue, mailing list, plus a "needs
-attention" group (no website link, venue/time to confirm, CPD bundles,
-multi-part programmes). Option counts stay live as you filter. The month bar
-chart doubles as a month filter.
+**Filters** — reporting period, activity type, format, regional or local,
+registration, website status, PD category, brochure category, network, venue,
+mailing list, processed for reports, plus a "needs attention" group (no website
+link, venue/time to confirm, CPD bundles, multi-part programmes). Option counts
+stay live as you filter. The month bar chart doubles as a month filter.
+
+Because nearly every activity is regional and booked through the website, only
+the exceptions are badged on the schedule cards: a **Local** pill, and a pill
+naming the booking platform when it is not the website.
 
 **Counting** — the header shows both numbers: bookable sessions and distinct
 activities. Sessions 2 and 3 of a multi-part CPD programme are one booking, so
@@ -203,6 +207,9 @@ detail panel, and a print stylesheet that drops the controls and prints the list
 | Format | Derived from Location — `Online`, `TBC` → "Venue TBC", anything else → face-to-face |
 | Day of week | Recomputed from the date, because column C is a formula |
 | Session number | Parsed from a `- Session N` title suffix |
+| Regional or local | Column S, folded to `Regional` / `Local`; other wording passes through as typed |
+| Registration | Column T, folded to `Website` / `External platform`; a named platform passes through as typed |
+| Processed for reports | Column U, an Excel checkbox. Read from the evaluated value, since openpyxl reports the cell as the formula `=FALSE()` |
 
 ### Data quirks it handles
 
