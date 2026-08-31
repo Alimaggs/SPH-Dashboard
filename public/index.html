@@ -385,6 +385,7 @@ button.stat:hover { background: var(--surface-2); }
 }
 .stat .k { font-size: 12px; color: var(--muted); }
 .stat .sub { font-size: 11.5px; color: var(--muted); font-family: var(--mono); }
+.sub-ticketing { color: var(--ticketing); }
 .stat.accent .v { color: var(--brand-ink); }
 .stat.good .v { color: var(--live); }
 
@@ -1104,6 +1105,11 @@ function renderStats(rows) {
   const f2f = rows.filter((a) => a.format === "Face-to-face").length;
   const capacity = rows.reduce((sum, a) => sum + (a.tickets || 0), 0);
   const live = rows.filter((a) => a.status === "live" || a.status === "ticketing").length;
+  const ticketing = rows.filter((a) => a.status === "ticketing").length;
+  // Anything not published and not a later session still needs a page. Later
+  // sessions are covered by session 1's booking and never get one of their own,
+  // so counting them here would overstate the backlog.
+  const pending = rows.filter((a) => !["live", "ticketing", "later"].includes(a.status)).length;
 
   const card = (cls, value, key, sub, action) => `
     <${action ? "button" : "div"} class="stat ${cls}" ${action ? `type="button" data-stat="${action}"` : ""}>
@@ -1117,7 +1123,10 @@ function renderStats(rows) {
     card("", online, "Online", `${Math.round(online / (rows.length || 1) * 100)}% of sessions`, "online"),
     card("", f2f, "Face-to-face", f2f ? `${new Set(rows.filter((a) => a.venue).map((a) => a.venue)).size} venues` : "&mdash;", "f2f"),
     card("", capacity.toLocaleString("en-GB"), "Ticket capacity", "across all sessions"),
-    card("good", live, "Live on website", `${rows.length - live} still to publish`, "live"),
+    card("good", live, "Live on website",
+      `${pending} still to publish`
+      + (ticketing ? `<br><span class="sub-ticketing">${ticketing} live, not yet ticketed</span>` : ""),
+      "live"),
   ].join("");
 }
 
@@ -1496,7 +1505,12 @@ $("#stats").addEventListener("click", (e) => {
   const map = {
     online: () => toggle("format", "Online"),
     f2f: () => toggle("format", "Face-to-face"),
-    live: () => toggle("status", "live"),
+    // The tile counts both published states, so clicking it selects both.
+    live: () => {
+      const both = ["live", "ticketing"];
+      const on = both.every((v) => state.sel.status.has(v));
+      both.forEach((v) => (on ? state.sel.status.delete(v) : state.sel.status.add(v)));
+    },
   };
   map[stat.dataset.stat]?.();
   render();
