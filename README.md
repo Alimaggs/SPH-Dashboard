@@ -179,9 +179,9 @@ notes, tickets, every HubSpot tag, and a link to the course page.
 
 **Filters** — reporting period, activity type, format, regional or local,
 registration, website status, PD category, brochure category, network, venue,
-mailing list, processed for reports, plus a "needs attention" group (no website
-link, venue/time to confirm, CPD bundles, multi-part programmes). Option counts
-stay live as you filter. The month bar chart doubles as a month filter.
+mailing list, processed for reports, plus a "needs attention" group (needs
+ticketing, no website link, venue/time to confirm). Option counts stay live as
+you filter. The month bar chart doubles as a month filter.
 
 Because nearly every activity is regional and booked through the website, only
 the exceptions are badged on the schedule cards: a **Local** pill, and a pill

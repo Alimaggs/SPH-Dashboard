@@ -993,8 +993,7 @@ const FACETS = [
 ];
 
 const FLAGS = {
-  cpd:       { label: "CPD bundle", test: (a) => a.cpd === "Yes" },
-  multipart: { label: "Multi-part programme", test: (a) => a.parts > 0 },
+  ticketing: { label: "Needs ticketing", test: (a) => a.status === "ticketing" },
   nourl:     { label: "No website link", test: (a) => !safeUrl(a.url) },
   tbc:       { label: "Venue or time to confirm", test: (a) => a.format === "Venue TBC" || a.time === "TO ADD" },
 };
