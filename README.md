@@ -217,9 +217,11 @@ detail panel, and a print stylesheet that drops the controls and prints the list
 - Mailing List values are split on commas against a known vocabulary, so
   `Communication, Language and Literacy` stays whole while `Leadership, PSED`
   splits into two.
-- The venue filter merges `St Pauls Nursery Community Room`, `Community Room` and
-  `St. Paul's Nursery School` into one venue (per the master list reference doc).
-  The detail panel always shows the original Location text as typed.
+- The venue filter folds every spelling of St Pauls Nursery Community Room into
+  that one name — `Community Room`, `St. Paul's Nursery School`, `St Pauls
+  Nursery School` and `St Paul's Nursery School & Children's Centre` all refer to
+  it. Add any new spelling to `VENUE_ALIASES` in the build script. The detail
+  panel always shows the original Location text as typed.
 - A blank Network column means "not a network activity", not missing data.
 
 Two things to know when reading the numbers: the venue merge above is a

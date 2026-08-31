@@ -87,13 +87,16 @@ REGISTRATION_ALIASES = {
     "external platform": "External platform",
 }
 
-# Same physical venue, typed three different ways across rows.
+# One physical venue, typed several different ways across the rows.
+ST_PAULS = "St Pauls Nursery Community Room"
 VENUE_ALIASES = {
-    "st pauls nursery community room": "St Paul's Nursery School",
-    "st. paul's nursery school": "St Paul's Nursery School",
-    "st paul's nursery school": "St Paul's Nursery School",
-    "st pauls nursery school": "St Paul's Nursery School",
-    "community room": "St Paul's Nursery School",
+    "st pauls nursery community room": ST_PAULS,
+    "st. paul's nursery school": ST_PAULS,
+    "st paul's nursery school": ST_PAULS,
+    "st pauls nursery school": ST_PAULS,
+    "st paul's nursery school & children's centre": ST_PAULS,
+    "st pauls nursery school & childrens centre": ST_PAULS,
+    "community room": ST_PAULS,
 }
 
 # Response headers for the static host. The page is a single self-contained
