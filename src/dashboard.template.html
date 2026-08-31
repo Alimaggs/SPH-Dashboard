@@ -1104,6 +1104,8 @@ function renderStats(rows) {
   const online = rows.filter((a) => a.format === "Online").length;
   const f2f = rows.filter((a) => a.format === "Face-to-face").length;
   const capacity = rows.reduce((sum, a) => sum + (a.tickets || 0), 0);
+  const counted = rows.filter((a) => a.tickets != null).length;
+  const elsewhere = rows.filter((a) => a.tickets == null && a.ticketsText).length;
   const live = rows.filter((a) => a.status === "live" || a.status === "ticketing").length;
   const ticketing = rows.filter((a) => a.status === "ticketing").length;
   // Anything not published and not a later session still needs a page. Later
@@ -1122,7 +1124,9 @@ function renderStats(rows) {
     card("accent", distinct, "Activities", `${rows.length} individual sessions`),
     card("", online, "Online", `${Math.round(online / (rows.length || 1) * 100)}% of sessions`, "online"),
     card("", f2f, "Face-to-face", f2f ? `${new Set(rows.filter((a) => a.venue).map((a) => a.venue)).size} venues` : "&mdash;", "f2f"),
-    card("", capacity.toLocaleString("en-GB"), "Ticket capacity", "across all sessions"),
+    card("", capacity.toLocaleString("en-GB"), "Ticket capacity",
+      `across ${counted} of ${rows.length} sessions`
+      + (elsewhere ? `<br>${elsewhere} booked externally` : "")),
     card("good", live, "Live on website",
       `${pending} still to publish`
       + (ticketing ? `<br><span class="sub-ticketing">${ticketing} live, not yet ticketed</span>` : ""),
@@ -1235,7 +1239,8 @@ const COLUMNS = [
   { key: "name", label: "Activity", cls: "t-name", cell: (a) => esc(a.name) },
   { key: "type", label: "Type", cls: "", cell: (a) => a.type },
   { key: "format", label: "Location", cls: "t-dim", cell: (a) => a.format === "Online" ? "Online" : (a.location || "TBC") },
-  { key: "tickets", label: "Tickets", cls: "t-num", cell: (a) => a.tickets == null ? "&mdash;" : a.tickets },
+  { key: "tickets", label: "Tickets", cls: "t-num",
+    cell: (a) => (a.tickets != null ? a.tickets : (a.ticketsText || "")) },
   { key: "brochure", label: "Brochure category", cls: "t-dim", cell: (a) => a.brochure },
   { key: "pd", label: "PD category", cls: "t-dim", cell: (a) => a.pd },
   { key: "status", label: "Status", cls: "", cell: (a) => `<span class="pill pill-${a.status}">${esc(STATUS_TEXT[a.status] || a.status)}</span>` },
@@ -1353,7 +1358,9 @@ function openPanel(id) {
       ["Where", a.format === "Online" ? "Online" : esc(a.location || "Venue TBC")],
       ["Reach", esc(a.scope)],
       ["Registration", esc(a.registration)],
-      ["Tickets", a.tickets == null ? "" : `<span class="num">${a.tickets}</span>`],
+      ["Tickets", a.tickets != null
+        ? `<span class="num">${a.tickets}</span>`
+        : (a.ticketsText ? esc(a.ticketsText) : "")],
       ["Brochure", esc(a.brochure)],
       ["PD category", esc(a.pd)],
       ["Network", esc(a.network)],

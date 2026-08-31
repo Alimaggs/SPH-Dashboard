@@ -207,6 +207,7 @@ detail panel, and a print stylesheet that drops the controls and prints the list
 | Format | Derived from Location — `Online`, `TBC` → "Venue TBC", anything else → face-to-face |
 | Day of week | Recomputed from the date, because column C is a formula |
 | Session number | Parsed from a `- Session N` title suffix |
+| Tickets | A number where the column holds one. Non-numeric text such as `External` is shown as typed, and those sessions are left out of the Ticket capacity total |
 | Regional or local | Column S, folded to `Regional` / `Local`; other wording passes through as typed |
 | Registration | Column T, folded to `Website` / `External platform`; a named platform passes through as typed |
 | Processed for reports | Column U, an Excel checkbox. Read from the evaluated value, since openpyxl reports the cell as the formula `=FALSE()` |

@@ -290,11 +290,16 @@ def read_rows() -> list[dict]:
             else:
                 fmt = "Face-to-face"
 
+            # The column usually holds a capacity, but reads "External" where
+            # booking happens elsewhere and the number is not ours to know.
+            # Keep that word rather than showing the row as missing data.
             tickets_raw = cell(excel_row, "Number of Tickets").value
             try:
                 tickets = int(tickets_raw)
+                tickets_text = ""
             except (TypeError, ValueError):
                 tickets = None
+                tickets_text = clean(tickets_raw)
 
             scope_cell = cell(excel_row, "Regional/Local")
             scope = clean(scope_cell.value if scope_cell else None)
@@ -325,6 +330,7 @@ def read_rows() -> list[dict]:
                 "venue": venue,
                 "format": fmt,
                 "tickets": tickets,
+                "ticketsText": tickets_text,
                 "type": strip_tag(cell(excel_row, "Activity Type").value, "AT"),
                 "pd": strip_tag(cell(excel_row, "Professional Development Category").value, "PD"),
                 "network": strip_tag(cell(excel_row, "Network").value, "NW"),
