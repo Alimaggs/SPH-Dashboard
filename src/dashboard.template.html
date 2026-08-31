@@ -390,7 +390,29 @@ button.stat:hover { background: var(--surface-2); }
   box-shadow: var(--shadow);
 }
 .months-head { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; margin-bottom: 8px; }
-.bars { display: flex; gap: 3px; align-items: flex-end; overflow-x: auto; padding-bottom: 2px; }
+.bars { display: flex; gap: 16px; align-items: flex-end; overflow-x: auto; padding-bottom: 2px; }
+
+/* Each reporting period is three whole months, so the strip bands into four
+   groups and the band doubles as that period's filter. */
+.rp-group { display: flex; flex-direction: column; gap: 7px; min-width: 0; }
+.rp-bars { display: flex; gap: 3px; align-items: flex-end; }
+
+.rp-label {
+  border: 0;
+  border-top: 1.5px solid var(--line);
+  background: none;
+  padding: 6px 0 0;
+  font-family: var(--display);
+  font-size: 10.5px;
+  font-weight: 600;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: var(--muted);
+  cursor: pointer;
+  text-align: center;
+}
+.rp-label:hover { color: var(--ink-2); border-top-color: var(--brand-mid); }
+.rp-label.is-on { color: var(--brand-ink); border-top-color: var(--brand); }
 
 .bar {
   flex: 1 1 0;
@@ -864,7 +886,7 @@ td.t-dim { color: var(--muted); }
     <section class="months">
       <div class="months-head">
         <span class="eyebrow">Activities by month</span>
-        <span class="eyebrow" id="monthHint">Click a month to filter</span>
+        <span class="eyebrow" id="monthHint">Click a month or period to filter</span>
       </div>
       <div class="bars" id="bars"></div>
     </section>
@@ -1091,6 +1113,14 @@ function renderStats(rows) {
 }
 
 /* ------------------------------------------------------------ month strip */
+// Which reporting period each month sits in, taken from the data rather than
+// hard-coded, so it stays right if the periods ever move.
+const MONTH_PERIOD = new Map();
+ACTIVITIES.forEach((a) => {
+  if (a.month && a.rp && !MONTH_PERIOD.has(a.month)) MONTH_PERIOD.set(a.month, a.rp);
+});
+const PERIOD_RANGE = new Map((DATA.periods || []).map((p) => [p.id, p.from + " to " + p.to]));
+
 function renderMonths(rows) {
   const all = new Map();
   ACTIVITIES.forEach((a) => { if (a.month) all.set(a.month, (all.get(a.month) || 0) + 1); });
@@ -1099,7 +1129,7 @@ function renderMonths(rows) {
   const keys = [...all.keys()].sort();
   const peak = Math.max(...all.values(), 1);
 
-  $("#bars").innerHTML = keys.map((key) => {
+  const bar = (key) => {
     const [y, m] = key.split("-");
     const total = all.get(key) || 0;
     const hit = hits.get(key) || 0;
@@ -1111,6 +1141,26 @@ function renderMonths(rows) {
       <span class="col"><span class="fill" style="height:${Math.max(hit / peak * 100, hit ? 6 : 0)}%"></span></span>
       <span class="m">${MONTH_SHORT[Number(m) - 1]}</span>
     </button>`;
+  };
+
+  // Consecutive months in the same period form one band.
+  const bands = [];
+  keys.forEach((key) => {
+    const rp = MONTH_PERIOD.get(key) || "";
+    const last = bands[bands.length - 1];
+    if (last && last.rp === rp) last.keys.push(key);
+    else bands.push({ rp, keys: [key] });
+  });
+
+  $("#bars").innerHTML = bands.map((band) => {
+    const on = state.sel.rp.has(band.rp);
+    const range = PERIOD_RANGE.get(band.rp);
+    // Grow by month count so bars stay the same width across bands.
+    return `<div class="rp-group" style="flex:${band.keys.length} 1 0">
+      <div class="rp-bars">${band.keys.map(bar).join("")}</div>
+      ${band.rp ? `<button type="button" class="rp-label ${on ? "is-on" : ""}" data-rp="${esc(band.rp)}"
+          aria-pressed="${on}" title="${esc(band.rp)}${range ? ", " + esc(range) : ""}">${esc(band.rp)}</button>` : ""}
+    </div>`;
   }).join("");
 }
 
@@ -1415,6 +1465,8 @@ $("#facets").addEventListener("change", (e) => {
 });
 
 $("#bars").addEventListener("click", (e) => {
+  const band = e.target.closest(".rp-label");
+  if (band) { toggle("rp", band.dataset.rp); render(); return; }
   const bar = e.target.closest(".bar");
   if (!bar) return;
   state.months.has(bar.dataset.month) ? state.months.delete(bar.dataset.month) : state.months.add(bar.dataset.month);
