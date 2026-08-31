@@ -1418,12 +1418,16 @@ function updateScrim() {
   $("#scrim").classList.toggle("is-open", open);
 }
 
-function setRail(open) {
+function setRail(open, moveFocus) {
   const rail = $("#rail");
   open ? rail.removeAttribute("hidden") : rail.setAttribute("hidden", "");
   $("#railToggle").setAttribute("aria-expanded", String(open));
   updateScrim();
-  if (open) rail.focus();
+  // Focus follows the drawer only when someone opens or closes it. On a desktop
+  // load the rail is just part of the page, and focusing it there paints a
+  // focus ring around the whole column before anyone has touched anything.
+  if (!moveFocus || !narrow.matches) return;
+  open ? rail.focus() : $("#railToggle").focus();
 }
 
 // Crossing the breakpoint resets the rail to that layout's default, so a rail
@@ -1551,9 +1555,9 @@ $("#panelBody").addEventListener("click", (e) => {
 });
 
 $("#panelClose").addEventListener("click", closePanel);
-$("#scrim").addEventListener("click", () => { closePanel(); if (railOpen()) setRail(false); });
+$("#scrim").addEventListener("click", () => { closePanel(); if (railOpen()) setRail(false, true); });
 document.addEventListener("keydown", (e) => {
-  if (e.key === "Escape") { closePanel(); if (railOpen()) setRail(false); }
+  if (e.key === "Escape") { closePanel(); if (railOpen()) setRail(false, true); }
   if (e.key === "/" && document.activeElement !== $("#q")) { e.preventDefault(); $("#q").focus(); }
 });
 
@@ -1566,8 +1570,8 @@ $("#resetBtn").addEventListener("click", () => {
   render();
 });
 
-$("#railToggle").addEventListener("click", () => setRail(!railOpen()));
-$("#railClose").addEventListener("click", () => setRail(false));
+$("#railToggle").addEventListener("click", () => setRail(!railOpen(), true));
+$("#railClose").addEventListener("click", () => setRail(false, true));
 narrow.addEventListener("change", applyLayout);
 
 $("#themeBtn").addEventListener("click", () => {
