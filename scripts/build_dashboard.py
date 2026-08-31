@@ -92,6 +92,7 @@ VENUE_ALIASES = {
     "st pauls nursery community room": "St Paul's Nursery School",
     "st. paul's nursery school": "St Paul's Nursery School",
     "st paul's nursery school": "St Paul's Nursery School",
+    "st pauls nursery school": "St Paul's Nursery School",
     "community room": "St Paul's Nursery School",
 }
 
