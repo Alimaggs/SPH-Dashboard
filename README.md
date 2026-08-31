@@ -187,7 +187,7 @@ Because nearly every activity is regional and booked through the website, only
 the exceptions are badged on the schedule cards: a **Local** pill, and a pill
 naming the booking platform when it is not the website.
 
-**Counting** — the header shows both numbers: bookable sessions and distinct
+**Counting** — the header shows both numbers: individual sessions and distinct
 activities. Sessions 2 and 3 of a multi-part CPD programme are one booking, so
 they don't count as separate activities. "Count programmes once" at the bottom of
 the filter rail hides those rows entirely.

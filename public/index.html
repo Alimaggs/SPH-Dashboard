@@ -1119,7 +1119,7 @@ function renderStats(rows) {
     </${action ? "button" : "div"}>`;
 
   $("#stats").innerHTML = [
-    card("accent", distinct, "Activities", `${rows.length} bookable sessions`),
+    card("accent", distinct, "Activities", `${rows.length} individual sessions`),
     card("", online, "Online", `${Math.round(online / (rows.length || 1) * 100)}% of sessions`, "online"),
     card("", f2f, "Face-to-face", f2f ? `${new Set(rows.filter((a) => a.venue).map((a) => a.venue)).size} venues` : "&mdash;", "f2f"),
     card("", capacity.toLocaleString("en-GB"), "Ticket capacity", "across all sessions"),
