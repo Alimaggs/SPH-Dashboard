@@ -560,9 +560,13 @@ button.stat:hover { background: var(--surface-2); }
   box-shadow: var(--shadow);
 }
 table { border-collapse: collapse; width: 100%; font-size: 13.5px; }
+/* top: 0, not an offset below the masthead. .table-wrap sets overflow-x, which
+   forces overflow-y to compute to auto, so the wrapper - not the viewport - is
+   this header's scroll container. Any offset here pushes the header down from
+   the table's own top edge and straight through the first row. */
 thead th {
   position: sticky;
-  top: 76px;
+  top: 0;
   z-index: 5;
   background: var(--surface-2);
   text-align: left;
@@ -780,7 +784,6 @@ td.t-dim { color: var(--muted); }
     padding: 16px 16px 32px;
   }
   .rail[hidden] { display: none; }
-  thead th { top: 0; }
 }
 
 @media (max-width: 700px) {
