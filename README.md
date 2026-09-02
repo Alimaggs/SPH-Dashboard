@@ -47,7 +47,10 @@ Edit `src/dashboard.template.html` to change the dashboard itself; never edit
 anything in `public/`, it is overwritten on every build.
 
 The build is deterministic: the same inputs always produce a byte-identical
-`public/index.html`, so a rebuild that changes nothing commits nothing.
+`public/index.html`, so a rebuild that changes nothing commits nothing. The
+"Data updated" date in the footer is the workbook's own last-saved timestamp,
+read from its document properties — not the time of the build, which would
+otherwise make every rebuild on a new day look like a change.
 
 ### Changing the logos
 

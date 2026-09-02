@@ -234,7 +234,7 @@ def parse_time(value: str) -> tuple[str, int | None]:
     return text, hour * 60 + minute
 
 
-def read_rows() -> list[dict]:
+def read_rows() -> tuple[list[dict], datetime]:
     workbook = openpyxl.load_workbook(find_workbook())
     # A second pass with the formulas evaluated. The first pass has to keep
     # them, because it is also where the cell fill colours are read from.
@@ -354,6 +354,12 @@ def read_rows() -> list[dict]:
                 },
             })
 
+    # When the spreadsheet was last saved, from its own document properties.
+    # Using this rather than the build time keeps the output byte-identical for
+    # a given workbook, and makes "Data updated" mean the data rather than the
+    # build. Some generators leave it unset, hence the fallback.
+    saved = workbook.properties.modified or datetime.now()
+
     rows.sort(key=lambda r: (r["date"] or "9999", r["timeSort"], r["name"]))
 
     # Mark multi-part programmes: a title stem carrying "Session N" rows.
@@ -367,14 +373,14 @@ def read_rows() -> list[dict]:
         # A "distinct activity" is every row except sessions 2 and 3 of a
         # multi-part programme, which are covered by the session 1 booking.
         row["counts"] = not (row["session"] and row["session"] > 1)
-    return rows
+    return rows, saved
 
 
 def build() -> None:
-    rows = read_rows()
+    rows, saved = read_rows()
     payload = {
-        "generated": datetime.now().strftime("%d %B %Y"),
-        "year": datetime.now().year,
+        "generated": saved.strftime("%d %B %Y"),
+        "year": saved.year,
         "periods": [
             {"id": key, "tag": tag, "from": start, "to": end}
             for key, (tag, start, end) in PERIODS.items()
@@ -405,6 +411,7 @@ def build() -> None:
     counted = sum(1 for r in rows if r["counts"])
     size = OUTPUT.stat().st_size / 1024
     print(f"{len(rows)} rows -> {counted} distinct activities")
+    print(f"  workbook saved: {saved:%d %B %Y %H:%M}")
     for field, label in (("scope", "Regional/Local"),
                          ("registration", "Registration"),
                          ("processed", "Processed for Reports")):
