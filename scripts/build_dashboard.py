@@ -99,19 +99,18 @@ VENUE_ALIASES = {
     "community room": ST_PAULS,
 }
 
-# Response headers for the static host. The page is a single self-contained
-# document: no scripts, styles, images or connections come from anywhere but
-# itself, Google Fonts and its own data: URIs, so the policy can deny the rest
-# outright. Inline script and style are unavoidable here (the whole page is one
-# inline block), and neither reads anything a visitor controls.
+# Response headers for the static host. Since moving to Fluent the page uses
+# the system font stack, so it fetches nothing at all: every style, script and
+# image is inline or a data: URI and the policy can deny every remote origin.
+# Inline script and style are unavoidable here (the whole page is one inline
+# block), and neither reads anything a visitor controls.
 #
 # frame-ancestors 'self' blocks other sites from embedding the dashboard. To
 # embed it in beyth.co.uk, add that origin here.
 CSP = (
     "default-src 'none'; "
     "script-src 'unsafe-inline'; "
-    "style-src 'unsafe-inline' https://fonts.googleapis.com; "
-    "font-src https://fonts.gstatic.com; "
+    "style-src 'unsafe-inline'; "
     "img-src data:; "
     "base-uri 'none'; "
     "form-action 'none'; "

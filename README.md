@@ -4,9 +4,9 @@ A dashboard for the Bristol & Beyond Stronger Practice Hub team to view and filt
 every activity running in 2026–2027.
 
 The build reads `Data/2026-2027 SPH Activity Master List.xlsx` and produces one
-self-contained HTML file at `public/index.html` — no server, no build tooling, no
-internet dependency except web fonts. Sevalla serves that file; you can also open
-it locally, email it, or drop it on a shared drive.
+self-contained HTML file at `public/index.html` — no server, no build tooling and
+no network requests at all. Sevalla serves that file; you can also open it
+locally, email it, or drop it on a shared drive.
 
 ## Deploying
 
@@ -129,8 +129,10 @@ needs a login in front of it.
 `public/_headers` sets a strict Content-Security-Policy plus `nosniff`,
 `X-Frame-Options`, `Referrer-Policy`, `Permissions-Policy` and HSTS. The policy
 denies everything by default and allows only what this page actually uses: its
-own inline script and style, Google Fonts, and its own `data:` images. It makes
-no network connections at all, so `connect-src` falls through to `none`.
+own inline script and style, and its own `data:` images. Since the move to
+Fluent the page uses the system font stack and fetches nothing at all, so every
+remote origin is denied — `connect-src`, `font-src` and the rest all fall
+through to `none`.
 
 `frame-ancestors 'self'` stops other sites embedding the dashboard. **To embed it
 in beyth.co.uk**, add that origin to the `CSP` value in `scripts/build_dashboard.py`
@@ -173,6 +175,34 @@ in front of it, not crawler hints.
 It needs write access to the repo. Check *Settings → Actions → General →
 Workflow permissions* is set to **Read and write permissions** — that setting is
 a ceiling the workflow cannot raise on its own.
+
+## Design
+
+The interface follows **Microsoft Fluent 2**. Values are taken from
+`@fluentui/tokens` rather than eyeballed: the type ramp (Caption 1 at 12/16,
+Body 1 at 14/20, Subtitle 1 at 20/26 and so on), corner radii (2/4/6/8px),
+stroke widths, the 4px spacing ramp, the motion curves and durations, the
+neutral greys for both themes, and the elevation formula — every Fluent shadow
+is a soft ambient layer plus a sharp key one, `0 0 2px` over `0 1px 2px` at
+shadow2 and so on up.
+
+Two deliberate departures:
+
+**The brand ramp is ours, not Microsoft's.** Fluent is built to be themed, so
+rather than shipping Microsoft's communication blue the sixteen-step ramp is
+generated from the Bristol & Beyond blue `#224c7f`, anchored at step 80 and
+following Fluent's own lightness curve. Buttons, selection, focus, links and the
+month chart all draw from it.
+
+**Status colours mirror the spreadsheet.** Fluent's success/warning/danger
+semantics do not map onto a publishing pipeline, so each status keeps the hue of
+its fill colour in column A — green for live, purple for needs ticketing, and so
+on — expressed through Fluent's shared colour ramps as tint badges. Every badge
+was checked at 4.5:1 or better against its own background in both themes.
+
+There is no webfont. Fluent specifies Segoe UI, which ships with Windows, and
+falls back to the platform's own UI font elsewhere — which is what Fluent asks
+for on non-Windows platforms anyway.
 
 ## What the dashboard does
 
