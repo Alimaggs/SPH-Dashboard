@@ -32,6 +32,10 @@ IMAGES = {
     "__CC_COLOUR__": "cc-colour.png",
     "__CC_WHITE__":  "cc-white.png",
 }
+# Material 3 specifies Roboto. It is embedded rather than fetched so the page
+# still loads in one request and the CSP can keep denying every remote origin.
+# SIL Open Font License 1.1 — src/fonts/OFL.txt travels with it.
+FONT = ROOT / "src" / "fonts" / "roboto-latin.woff2"
 TEMPLATE = ROOT / "src" / "dashboard.template.html"
 # Sevalla serves this directory as the static site's publish directory.
 PUBLIC = ROOT / "public"
@@ -99,9 +103,9 @@ VENUE_ALIASES = {
     "community room": ST_PAULS,
 }
 
-# Response headers for the static host. Since moving to Fluent the page uses
-# the system font stack, so it fetches nothing at all: every style, script and
-# image is inline or a data: URI and the policy can deny every remote origin.
+# Response headers for the static host. The page fetches nothing at all: every
+# style, script, image and the Roboto subset are inline or data: URIs, so the
+# policy can deny every remote origin.
 # Inline script and style are unavoidable here (the whole page is one inline
 # block), and neither reads anything a visitor controls.
 #
@@ -112,6 +116,7 @@ CSP = (
     "script-src 'unsafe-inline'; "
     "style-src 'unsafe-inline'; "
     "img-src data:; "
+    "font-src data:; "
     "base-uri 'none'; "
     "form-action 'none'; "
     "frame-ancestors 'self'"
@@ -160,6 +165,12 @@ def embed_image(name: str) -> str:
     """Return a prepared image as a data URI."""
     encoded = base64.b64encode((IMAGES_DIR / name).read_bytes()).decode("ascii")
     return f"data:image/png;base64,{encoded}"
+
+
+def embed_font() -> str:
+    """Return the Roboto subset as a data URI."""
+    encoded = base64.b64encode(FONT.read_bytes()).decode("ascii")
+    return f"data:font/woff2;base64,{encoded}"
 
 
 def clean(value) -> str:
@@ -390,6 +401,7 @@ def build() -> None:
     html = TEMPLATE.read_text(encoding="utf-8")
     for placeholder, name in IMAGES.items():
         html = html.replace(placeholder, embed_image(name))
+    html = html.replace("__ROBOTO__", embed_font())
     html = html.replace(
         '"__SPH_DATA__"',
         json.dumps(payload, ensure_ascii=False, separators=(",", ":")),

@@ -129,10 +129,9 @@ needs a login in front of it.
 `public/_headers` sets a strict Content-Security-Policy plus `nosniff`,
 `X-Frame-Options`, `Referrer-Policy`, `Permissions-Policy` and HSTS. The policy
 denies everything by default and allows only what this page actually uses: its
-own inline script and style, and its own `data:` images. Since the move to
-Fluent the page uses the system font stack and fetches nothing at all, so every
-remote origin is denied — `connect-src`, `font-src` and the rest all fall
-through to `none`.
+own inline script and style, and its own `data:` images and font. The page
+fetches nothing at all, so every remote origin is denied — `connect-src` and
+the rest fall through to `none`.
 
 `frame-ancestors 'self'` stops other sites embedding the dashboard. **To embed it
 in beyth.co.uk**, add that origin to the `CSP` value in `scripts/build_dashboard.py`
@@ -178,31 +177,44 @@ a ceiling the workflow cannot raise on its own.
 
 ## Design
 
-The interface follows **Microsoft Fluent 2**. Values are taken from
-`@fluentui/tokens` rather than eyeballed: the type ramp (Caption 1 at 12/16,
-Body 1 at 14/20, Subtitle 1 at 20/26 and so on), corner radii (2/4/6/8px),
-stroke widths, the 4px spacing ramp, the motion curves and durations, the
-neutral greys for both themes, and the elevation formula — every Fluent shadow
-is a soft ambient layer plus a sharp key one, `0 0 2px` over `0 1px 2px` at
-shadow2 and so on up.
+The interface follows **Material Design 3**.
 
-Two deliberate departures:
+The colour scheme is not hand-picked: it is generated from the Bristol & Beyond
+blue `#224c7f` with Material's own HCT engine (`materialyoucolor`, the Fidelity
+scheme variant), so every role — primary, containers, the five surface
+container levels, outline, and both themes — is real M3 output. Fidelity is
+chosen over the default Tonal Spot because it preserves the brand colour: the
+SPH blue appears as `primary-container` rather than being softened into a
+generic tonal blue.
 
-**The brand ramp is ours, not Microsoft's.** Fluent is built to be themed, so
-rather than shipping Microsoft's communication blue the sixteen-step ramp is
-generated from the Bristol & Beyond blue `#224c7f`, anchored at step 80 and
-following Fluent's own lightness curve. Buttons, selection, focus, links and the
-month chart all draw from it.
+Type, shape, elevation, state layers and motion all use the published M3 token
+values: the type scale (body-medium 14/20 at 0.25px tracking, title-small,
+label-medium and so on), the shape scale (4/8/12/16/28 and full), elevation
+levels, the 8% hover and 10% pressed state layers, and the standard and
+emphasised-decelerate easings.
 
-**Status colours mirror the spreadsheet.** Fluent's success/warning/danger
-semantics do not map onto a publishing pipeline, so each status keeps the hue of
-its fill colour in column A — green for live, purple for needs ticketing, and so
-on — expressed through Fluent's shared colour ramps as tint badges. Every badge
-was checked at 4.5:1 or better against its own background in both themes.
+Components map onto their M3 counterparts: a search bar rather than a text
+field, outlined and filled buttons at 40px with full corners, 48px list rows
+with state layers, filled cards at 12px, chips at 8px, primary tabs with a 3px
+rounded indicator, a navigation drawer with a 16px trailing corner, and a side
+sheet with a 16px leading corner.
 
-There is no webfont. Fluent specifies Segoe UI, which ships with Windows, and
-falls back to the platform's own UI font elsewhere — which is what Fluent asks
-for on non-Windows platforms anyway.
+**Status colours keep the spreadsheet's hues.** M3's error/success semantics say
+nothing about a publishing pipeline, so each status keeps the hue of its fill
+colour in column A and is expressed as an M3 container pair — container at tone
+90 with on-container at tone 30 in light, mirrored in dark. Every pair lands at
+about 7.2:1.
+
+### The typeface
+
+M3 specifies Roboto, which is not a system font. Rather than reintroduce a
+Google Fonts request, the Latin subset is vendored in `src/fonts/` and embedded
+in the page as a data URI. It is a variable font, so one 43 KB file covers both
+weights the dashboard uses, and the page still loads in a single request with
+the Content-Security-Policy denying every remote origin.
+
+Roboto is licensed under the SIL Open Font License 1.1; `src/fonts/OFL.txt` is
+redistributed with it as the licence requires.
 
 ## What the dashboard does
 
