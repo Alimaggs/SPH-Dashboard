@@ -28,34 +28,36 @@
   color-scheme: light;
 
   /* -- colour roles, light ---------------------------------------------- */
-  --md-primary: #003566;
-  --md-on-primary: #ffffff;
-  --md-primary-container: #224c7f;
-  --md-on-primary-container: #97bdf7;
-  --md-secondary-container: #d5e3fe;
-  --md-on-secondary-container: #3c4a5f;
+  --md-primary: #005caa;
+  --md-on-primary: #eef3ff;
+  --md-primary-container: #5aa2ff;
+  --md-on-primary-container: #002347;
+  --md-secondary: #2457b7;
+  --md-secondary-container: #c1d1ff;
+  --md-on-secondary-container: #00429f;
+  --md-tertiary-container: #fbdfff;
+  --md-on-tertiary-container: #6a2785;
   --md-error: #ba1a1a;
 
-  --md-surface: #f9f9fe;
-  --md-on-surface: #1a1c1f;
-  --md-surface-variant: #dfe2ed;
-  --md-on-surface-variant: #43474f;
+  --md-surface: #f6f6ff;
+  --md-on-surface: #1e2e51;
+  --md-surface-variant: #d1dcff;
+  --md-on-surface-variant: #4c5b81;
   --md-surface-container-lowest: #ffffff;
-  --md-surface-container-low: #f3f3f8;
-  --md-surface-container: #eeedf2;
-  --md-surface-container-high: #e8e8ed;
-  --md-surface-container-highest: #e2e2e7;
-  --md-outline: #737780;
-  --md-outline-variant: #c3c6d0;
-  --md-inverse-surface: #2f3034;
-  --md-inverse-on-surface: #f1f0f5;
+  --md-surface-container-low: #eef0ff;
+  --md-surface-container: #e2e7ff;
+  --md-surface-container-high: #dae2ff;
+  --md-surface-container-highest: #d1dcff;
+  --md-outline: #67769e;
+  --md-outline-variant: #9eacd7;
+  --md-inverse-surface: #000c2b;
+  --md-inverse-on-surface: #8d9cc6;
   --md-scrim: #000000;
 
-  /* Chart bars read as data, so they take whichever brand role carries on
-     the page's own surface: the blue itself in light, the light tint in dark. */
-  --md-chart-bar: #224c7f;
-  --md-chart-bar-selected: #003566;
-  --md-chart-track: #e2e2e7;
+  /* Two tones of the one brand role, so selection reads without a second hue. */
+  --md-chart-bar: #5aa2ff;
+  --md-chart-bar-selected: #005caa;
+  --md-chart-track: #dae2ff;
 
   /* -- status: one M3 container pair per spreadsheet fill colour --------- */
   --live-c: #bcf1a9;      --live-on: #23501b;
@@ -99,31 +101,34 @@
   :root:not([data-theme="light"]) {
     color-scheme: dark;
 
-    --md-primary: #a5c8ff;
-    --md-on-primary: #00315f;
-    --md-primary-container: #224c7f;
-    --md-on-primary-container: #97bdf7;
-    --md-secondary-container: #3c4a5f;
-    --md-on-secondary-container: #abb9d2;
+    --md-primary: #77b0ff;
+    --md-on-primary: #002f5b;
+    --md-primary-container: #5aa2ff;
+    --md-on-primary-container: #002347;
+    --md-secondary: #709bff;
+    --md-secondary-container: #0346a6;
+    --md-on-secondary-container: #cad7ff;
+    --md-tertiary-container: #5e1978;
+    --md-on-tertiary-container: #f9d8ff;
     --md-error: #ffb4ab;
 
-    --md-surface: #121317;
-    --md-on-surface: #e2e2e7;
-    --md-surface-variant: #43474f;
-    --md-on-surface-variant: #c3c6d0;
-    --md-surface-container-lowest: #0c0e12;
-    --md-surface-container-low: #1a1c1f;
-    --md-surface-container: #1e2023;
-    --md-surface-container-high: #282a2e;
-    --md-surface-container-highest: #333539;
-    --md-outline: #8d919a;
-    --md-outline-variant: #43474f;
-    --md-inverse-surface: #e2e2e7;
-    --md-inverse-on-surface: #2f3034;
+    --md-surface: #000c2b;
+    --md-on-surface: #dee5ff;
+    --md-surface-variant: #072355;
+    --md-on-surface-variant: #9baad5;
+    --md-surface-container-lowest: #000000;
+    --md-surface-container-low: #001135;
+    --md-surface-container: #001742;
+    --md-surface-container-high: #031d4b;
+    --md-surface-container-highest: #072355;
+    --md-outline: #66759c;
+    --md-outline-variant: #38476c;
+    --md-inverse-surface: #faf8ff;
+    --md-inverse-on-surface: #46547a;
 
-    --md-chart-bar: #a5c8ff;
-    --md-chart-bar-selected: #d6e4ff;
-    --md-chart-track: #333539;
+    --md-chart-bar: #5aa2ff;
+    --md-chart-bar-selected: #77b0ff;
+    --md-chart-track: #072355;
 
     --live-c: #23501b;      --live-on: #bcf1a9;
     --built-c: #004f52;     --built-on: #8ff2f6;
@@ -137,31 +142,34 @@
 :root[data-theme="dark"] {
   color-scheme: dark;
 
-  --md-primary: #a5c8ff;
-  --md-on-primary: #00315f;
-  --md-primary-container: #224c7f;
-  --md-on-primary-container: #97bdf7;
-  --md-secondary-container: #3c4a5f;
-  --md-on-secondary-container: #abb9d2;
+  --md-primary: #77b0ff;
+  --md-on-primary: #002f5b;
+  --md-primary-container: #5aa2ff;
+  --md-on-primary-container: #002347;
+  --md-secondary: #709bff;
+  --md-secondary-container: #0346a6;
+  --md-on-secondary-container: #cad7ff;
+  --md-tertiary-container: #5e1978;
+  --md-on-tertiary-container: #f9d8ff;
   --md-error: #ffb4ab;
 
-  --md-surface: #121317;
-  --md-on-surface: #e2e2e7;
-  --md-surface-variant: #43474f;
-  --md-on-surface-variant: #c3c6d0;
-  --md-surface-container-lowest: #0c0e12;
-  --md-surface-container-low: #1a1c1f;
-  --md-surface-container: #1e2023;
-  --md-surface-container-high: #282a2e;
-  --md-surface-container-highest: #333539;
-  --md-outline: #8d919a;
-  --md-outline-variant: #43474f;
-  --md-inverse-surface: #e2e2e7;
-  --md-inverse-on-surface: #2f3034;
+  --md-surface: #000c2b;
+  --md-on-surface: #dee5ff;
+  --md-surface-variant: #072355;
+  --md-on-surface-variant: #9baad5;
+  --md-surface-container-lowest: #000000;
+  --md-surface-container-low: #001135;
+  --md-surface-container: #001742;
+  --md-surface-container-high: #031d4b;
+  --md-surface-container-highest: #072355;
+  --md-outline: #66759c;
+  --md-outline-variant: #38476c;
+  --md-inverse-surface: #faf8ff;
+  --md-inverse-on-surface: #46547a;
 
-  --md-chart-bar: #a5c8ff;
-  --md-chart-bar-selected: #d6e4ff;
-  --md-chart-track: #333539;
+  --md-chart-bar: #5aa2ff;
+  --md-chart-bar-selected: #77b0ff;
+  --md-chart-track: #072355;
 
   --live-c: #23501b;      --live-on: #bcf1a9;
   --built-c: #004f52;     --built-on: #8ff2f6;
@@ -448,7 +456,8 @@ a { color: var(--md-primary); }
 }
 
 .stat {
-  background: var(--md-surface-container-low);
+  background: var(--tile-bg, var(--md-surface-container-low));
+  color: var(--tile-fg, var(--md-on-surface));
   border-radius: var(--md-shape-m);
   padding: 16px 20px 20px;
   display: flex;
@@ -460,7 +469,16 @@ a { color: var(--md-primary); }
   transition: background var(--md-duration-short) var(--md-easing-standard);
 }
 button.stat { cursor: pointer; }
-button.stat:hover { background: color-mix(in srgb, var(--md-on-surface) 8%, var(--md-surface-container-low)); }
+button.stat:hover {
+  background: color-mix(in srgb, var(--tile-fg, var(--md-on-surface)) 8%, var(--tile-bg, var(--md-surface-container-low)));
+}
+
+/* One tonal container per measure. This is where an M3 dashboard gets its
+   colour: the roles exist to be used, not just to tint a grey page. */
+.stat.tone-primary { --tile-bg: var(--md-primary-container); --tile-fg: var(--md-on-primary-container); }
+.stat.tone-secondary { --tile-bg: var(--md-secondary-container); --tile-fg: var(--md-on-secondary-container); }
+.stat.tone-tertiary { --tile-bg: var(--md-tertiary-container); --tile-fg: var(--md-on-tertiary-container); }
+.stat.tone-live { --tile-bg: var(--live-c); --tile-fg: var(--live-on); }
 
 /* headline-medium — M3 sets large numerals in regular weight. */
 .stat .v {
@@ -469,13 +487,13 @@ button.stat:hover { background: color-mix(in srgb, var(--md-on-surface) 8%, var(
   font-weight: 400;
   letter-spacing: 0;
   font-variant-numeric: tabular-nums;
-  color: var(--md-on-surface);
+  color: inherit;
 }
-.stat .k { font-size: 14px; line-height: 20px; letter-spacing: .25px; color: var(--md-on-surface); }
-.stat .sub { font-size: 12px; line-height: 16px; letter-spacing: .4px; color: var(--md-on-surface-variant); }
-.sub-ticketing { color: var(--ticketing-on); }
-.stat.accent .v { color: var(--md-primary); }
-.stat.good .v { color: var(--live-on); }
+.stat .k { font-size: 14px; line-height: 20px; letter-spacing: .25px; color: inherit; }
+.stat .sub { font-size: 12px; line-height: 16px; letter-spacing: .4px; color: var(--tile-fg, var(--md-on-surface-variant)); }
+/* On a plain tile this line keeps the ticketing purple; on a tonal one it
+   takes the tile's own colour rather than fighting it. */
+.sub-ticketing { color: var(--tile-fg, var(--ticketing-on)); font-weight: 500; }
 
 /* ------------------------------------------------------------ month strip */
 .months {
@@ -685,7 +703,7 @@ button.stat:hover { background: color-mix(in srgb, var(--md-on-surface) 8%, var(
 .pill-new { background: var(--new-c); color: var(--new-on); }
 .pill-later { background: var(--later-c); color: var(--later-on); }
 .pill-cpd { background: var(--cpd-c); color: var(--cpd-on); }
-.pill-type { background: var(--md-surface-container-highest); color: var(--md-on-surface-variant); }
+.pill-type { background: var(--md-secondary-container); color: var(--md-on-secondary-container); }
 .pill-cat { background: transparent; color: var(--md-on-surface-variant); border-color: var(--md-outline-variant); font-weight: 400; }
 .pill-local { background: transparent; color: var(--md-primary); border-color: var(--md-primary); }
 .pill-ext { background: transparent; color: var(--md-on-surface-variant); border-color: var(--md-outline); }
@@ -1240,13 +1258,13 @@ function renderStats(rows) {
     </${action ? "button" : "div"}>`;
 
   $("#stats").innerHTML = [
-    card("accent", distinct, "Activities", `${rows.length} individual sessions`),
-    card("", online, "Online", `${Math.round(online / (rows.length || 1) * 100)}% of sessions`, "online"),
-    card("", f2f, "Face-to-face", f2f ? `${new Set(rows.filter((a) => a.venue).map((a) => a.venue)).size} venues` : "&mdash;", "f2f"),
+    card("tone-primary", distinct, "Activities", `${rows.length} individual sessions`),
+    card("tone-secondary", online, "Online", `${Math.round(online / (rows.length || 1) * 100)}% of sessions`, "online"),
+    card("tone-tertiary", f2f, "Face-to-face", f2f ? `${new Set(rows.filter((a) => a.venue).map((a) => a.venue)).size} venues` : "&mdash;", "f2f"),
     card("", capacity.toLocaleString("en-GB"), "Ticket capacity",
       `across ${counted} of ${rows.length} sessions`
       + (elsewhere ? `<br>${elsewhere} booked externally` : "")),
-    card("good", live, "Live on website",
+    card("tone-live", live, "Live on website",
       `${pending} still to publish`
       + (ticketing ? `<br><span class="sub-ticketing">${ticketing} live, not yet ticketed</span>` : ""),
       "live"),

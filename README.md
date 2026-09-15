@@ -180,12 +180,22 @@ a ceiling the workflow cannot raise on its own.
 The interface follows **Material Design 3**.
 
 The colour scheme is not hand-picked: it is generated from the Bristol & Beyond
-blue `#224c7f` with Material's own HCT engine (`materialyoucolor`, the Fidelity
-scheme variant), so every role — primary, containers, the five surface
-container levels, outline, and both themes — is real M3 output. Fidelity is
-chosen over the default Tonal Spot because it preserves the brand colour: the
-SPH blue appears as `primary-container` rather than being softened into a
-generic tonal blue.
+blue `#224c7f` with Material's own HCT engine (`materialyoucolor`, the **Vibrant**
+scheme variant), so every role — primary, containers, the five surface container
+levels, outline, and both themes — is real M3 output.
+
+Vibrant is chosen over the default Tonal Spot because it carries the hue into
+the *surfaces*, not just the accents: the page sits on `#f6f6ff` and cards on
+`#eef0ff` rather than a neutral grey, and the dark theme is a deep navy rather
+than charcoal. That tint is what stops an M3 layout reading as flat.
+
+The colour roles are then used rather than merely defined. Each measure in the
+summary row takes its own tonal container — primary, secondary, tertiary,
+neutral and the live green — and the activity-type chip on every card takes the
+secondary container. Vibrant's tertiary is very saturated, so the one tile using
+it drops to a paler tone of the same hue; at full strength it shouted.
+
+Nothing coloured falls below 5.9:1 against its own text in either theme.
 
 Type, shape, elevation, state layers and motion all use the published M3 token
 values: the type scale (body-medium 14/20 at 0.25px tracking, title-small,
