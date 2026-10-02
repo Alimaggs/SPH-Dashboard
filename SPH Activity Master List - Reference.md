@@ -79,9 +79,12 @@ The fill colour on the Event Name cell tracks where the activity is in the publi
 | 🟡 Yellow | `FFFF00` | Just added to the spreadsheet — not yet processed onto the website. |
 | 🔵 Blue | `00B0F0` | Page built/processed in WordPress but not yet made public (hidden). |
 | 🟢 Green | `92D050` | Live on the website. |
+| 🟣 Purple | `7030A0` | Live on the website, but tickets not yet released. |
 | 🟠 Orange | `FFC000` | Session 2 or 3 of a multi-part programme — see §7. |
 
-Colour is only ever advanced forward (yellow → blue → green) as the event is processed; it's never set backward or overwritten automatically.
+Colour only ever moves forward as the event is processed — yellow → blue → green, or yellow → blue → purple where the page goes live before tickets are released, then purple → green once they are. It's never set backward or overwritten automatically.
+
+Orange sits outside that flow: it marks sessions 2 and 3 of a multi-part programme, which are never published as separate pages, so they never reach green.
 
 ## 6. Known data quality quirks (relevant for a dashboard build)
 

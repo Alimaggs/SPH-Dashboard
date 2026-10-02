@@ -1,0 +1,64 @@
+THINGS TO CHECK WITH ANNA
+=========================
+
+Open questions and follow-ups on the 2026-2027 SPH Activity Master List that
+don't belong in the spreadsheet itself — missing bios and photos, booking
+cut-off exceptions, venues awaiting confirmation, and anything needing a
+decision before a page goes live.
+
+How to use this file
+--------------------
+One block per item. Keep the date it was raised, the event it relates to, and
+what is actually needed. Move items to RESOLVED (with the date) rather than
+deleting them, so there is a record of what was agreed.
+
+Referenced in section 9 of "SPH Activity Master List - Reference.md".
+
+
+OPEN
+====
+
+[2026-10-02] Using Evidence to Strengthen Your Early Years Leadership
+  Sessions 1-3 (20 Oct, 10 Nov, 1 Dec) postponed on 2 Oct, new dates TBC.
+  Needed: replacement dates, so column B and the Status column can be updated
+  and the three course pages re-dated. Anyone already booked will need telling.
+
+[2026-10-02] Bristol EDI Network Sessions - sessions 4, 5 and 6
+  The notes on the three rows we have say "Session N of 6", but only sessions
+  1-3 (2 Oct, 16 Oct, 27 Nov) are in the list.
+  Needed: dates, facilitators and descriptions for sessions 4-6, or
+  confirmation that they are not running this year.
+
+[2026-10-02] Venues still to confirm (7 activities)
+  These are live or scheduled with no venue recorded:
+    23 Sep 2026  Autumn Outdoor Learning Morning for Childminders and Children
+    16 Oct 2026  Bristol EDI Network Sessions - Inclusive Environments
+    12 Nov 2026  Somerset Baby Practitioner Network Meeting - November 2026
+    27 Nov 2026  Bristol EDI Network Sessions - Inclusive Curriculum
+    29 Jan 2027  Quality Interactions Toolkit Roadshow
+     5 Feb 2027  Quality Interactions Toolkit Roadshow
+    12 Feb 2027  Quality Interactions Toolkit Roadshow
+  Needed: a venue for each, or "Online" where that is what is meant.
+  The 16 Oct EDI session is the most pressing.
+
+[2026-10-02] Somerset Baby Practitioner Network Meeting - 12 Nov 2026
+  Location is blank rather than "TBC". The North Somerset meetings turned out
+  to be online; this may be the same.
+  Needed: confirmation of online or in person, so Location can be set.
+
+[2026-10-02] Quality Interactions Toolkit Roadshows - tickets
+  All three (29 Jan, 5 Feb, 12 Feb) are live on the website but have no
+  tickets released — marked purple in column A.
+  Needed: venue first, then ticket numbers, then release.
+
+[2026-10-02] Broadmoor Lane Orchard Park. Bath
+  The venue on the October Outdoor Learning Morning (8 Oct 2026) reads
+  "Broadmoor Lane Orchard Park. Bath" — the full stop looks like it should be
+  a comma.
+  Needed: the correct venue name.
+
+
+RESOLVED
+========
+
+(nothing yet)
