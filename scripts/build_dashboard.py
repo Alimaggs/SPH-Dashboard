@@ -85,6 +85,15 @@ SCOPE_ALIASES = {
     "local": "Local",
 }
 
+# Column V. Postponed and cancelled rows stay in the sheet with a dated note
+# in Notes, rather than being deleted, and are left out of the activity counts.
+SCHEDULING_ALIASES = {
+    "scheduled": "Scheduled",
+    "postponed": "Postponed",
+    "cancelled": "Cancelled",
+    "canceled": "Cancelled",
+}
+
 REGISTRATION_ALIASES = {
     "website": "Website",
     "external": "External platform",
@@ -311,6 +320,10 @@ def read_rows() -> tuple[list[dict], datetime]:
                 tickets = None
                 tickets_text = clean(tickets_raw)
 
+            status_cell = cell(excel_row, "Status")
+            scheduling = clean(status_cell.value if status_cell else None)
+            scheduling = SCHEDULING_ALIASES.get(scheduling.lower(), scheduling) or "Scheduled"
+
             scope_cell = cell(excel_row, "Regional/Local")
             scope = clean(scope_cell.value if scope_cell else None)
             registration_cell = cell(excel_row, "Registration")
@@ -345,6 +358,7 @@ def read_rows() -> tuple[list[dict], datetime]:
                 "pd": strip_tag(cell(excel_row, "Professional Development Category").value, "PD"),
                 "network": strip_tag(cell(excel_row, "Network").value, "NW"),
                 "mailing": split_mailing(cell(excel_row, "Mailing List Subscriptions").value),
+                "scheduling": scheduling,
                 "scope": SCOPE_ALIASES.get(scope.lower(), scope),
                 "registration": REGISTRATION_ALIASES.get(registration.lower(), registration),
                 "processed": as_bool(cell_value(excel_row, "Processed for Reports")),
@@ -382,7 +396,10 @@ def read_rows() -> tuple[list[dict], datetime]:
         row["parts"] = parts.get(row["key"], 0)
         # A "distinct activity" is every row except sessions 2 and 3 of a
         # multi-part programme, which are covered by the session 1 booking.
-        row["counts"] = not (row["session"] and row["session"] > 1)
+        # Postponed and cancelled activities are not being run, so they are
+        # left out too, per the master list reference document.
+        row["counts"] = (not (row["session"] and row["session"] > 1)
+                         and row["scheduling"] == "Scheduled")
     return rows, saved
 
 
@@ -425,7 +442,8 @@ def build() -> None:
     print(f"  workbook saved: {saved:%d %B %Y %H:%M}")
     for field, label in (("scope", "Regional/Local"),
                          ("registration", "Registration"),
-                         ("processed", "Processed for Reports")):
+                         ("processed", "Processed for Reports"),
+                         ("scheduling", "Status")):
         tally = Counter(r[field] if r[field] != "" else "(blank)" for r in rows)
         print(f"  {label}: " + ", ".join(f"{v}={n}" for v, n in tally.most_common()))
     print(f"wrote {OUTPUT.relative_to(ROOT)} ({size:.0f} KB)")

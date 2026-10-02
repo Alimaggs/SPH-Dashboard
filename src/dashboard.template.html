@@ -60,6 +60,9 @@
   --md-chart-track: #dae2ff;
 
   /* -- status: one M3 container pair per spreadsheet fill colour --------- */
+  --postponed-c: #e2e7ff; --postponed-on: #4c5b81;
+  --cancelled-c: #ffdad6; --cancelled-on: #93000a;
+
   --live-c: #bcf1a9;      --live-on: #23501b;
   --built-c: #8ff2f6;     --built-on: #004f52;
   --ticketing-c: #e6deff; --ticketing-on: #493d7d;
@@ -130,6 +133,9 @@
     --md-chart-bar-selected: #77b0ff;
     --md-chart-track: #072355;
 
+    --postponed-c: #072355; --postponed-on: #9baad5;
+    --cancelled-c: #93000a; --cancelled-on: #ffdad6;
+
     --live-c: #23501b;      --live-on: #bcf1a9;
     --built-c: #004f52;     --built-on: #8ff2f6;
     --ticketing-c: #493d7d; --ticketing-on: #e6deff;
@@ -170,6 +176,9 @@
   --md-chart-bar: #5aa2ff;
   --md-chart-bar-selected: #77b0ff;
   --md-chart-track: #072355;
+
+  --postponed-c: #072355; --postponed-on: #9baad5;
+  --cancelled-c: #93000a; --cancelled-on: #ffdad6;
 
   --live-c: #23501b;      --live-on: #bcf1a9;
   --built-c: #004f52;     --built-on: #8ff2f6;
@@ -703,6 +712,15 @@ button.stat:hover {
 .pill-new { background: var(--new-c); color: var(--new-on); }
 .pill-later { background: var(--later-c); color: var(--later-on); }
 .pill-cpd { background: var(--cpd-c); color: var(--cpd-on); }
+.pill-postponed { background: var(--postponed-c); color: var(--postponed-on); }
+.pill-cancelled { background: var(--cancelled-c); color: var(--cancelled-on); }
+
+/* An activity that is not running still belongs in the list, but should not
+   read as business as usual: the date it is no longer happening on is struck
+   through and the card loses its status stripe. */
+.row.off-schedule { border-left-color: var(--md-outline-variant); }
+.row.off-schedule .date-cell .d { text-decoration: line-through; }
+.row.off-schedule .row-title { color: var(--md-on-surface-variant); }
 .pill-type { background: var(--md-secondary-container); color: var(--md-on-secondary-container); }
 .pill-cat { background: transparent; color: var(--md-on-surface-variant); border-color: var(--md-outline-variant); font-weight: 400; }
 .pill-local { background: transparent; color: var(--md-primary); border-color: var(--md-primary); }
@@ -1117,6 +1135,8 @@ const FACETS = [
   { id: "format", label: "Format", get: (a) => [a.format] },
   { id: "scope", label: "Regional or local", get: (a) => (a.scope ? [a.scope] : []), order: ["Regional", "Local"] },
   { id: "registration", label: "Registration", get: (a) => (a.registration ? [a.registration] : []) },
+  { id: "scheduling", label: "Scheduled or postponed", order: ["Scheduled", "Postponed", "Cancelled"],
+    get: (a) => (a.scheduling ? [a.scheduling] : []) },
   { id: "status", label: "Website status", get: (a) => [a.status], order: STATUS_ORDER, render: (v) => STATUS_TEXT[v] || v, swatch: true },
   { id: "pd", label: "PD category", get: (a) => (a.pd ? [a.pd] : []) },
   { id: "brochure", label: "Brochure category", get: (a) => (a.brochure ? [a.brochure] : []) },
@@ -1132,6 +1152,7 @@ const FACETS = [
 
 const FLAGS = {
   ticketing: { label: "Needs ticketing", test: (a) => a.status === "ticketing" },
+  offschedule: { label: "Postponed or cancelled", test: (a) => a.scheduling !== "Scheduled" },
   nourl:     { label: "No website link", test: (a) => !safeUrl(a.url) },
   tbc:       { label: "Venue or time to confirm", test: (a) => a.format === "Venue TBC" || a.time === "TO ADD" },
 };
@@ -1151,7 +1172,7 @@ function matchesText(a) {
   if (!state.q) return true;
   const hay = [a.name, a.summary, a.notes, a.location, a.venue, a.brochure, a.pd,
                a.network, a.type, (a.mailing || []).join(" "), a.day, a.time,
-               a.scope, a.registration]
+               a.scope, a.registration, a.scheduling]
     .join(" ").toLowerCase();
   return state.q.split(/\s+/).every((t) => hay.includes(t));
 }
@@ -1243,12 +1264,14 @@ function renderStats(rows) {
   const capacity = rows.reduce((sum, a) => sum + (a.tickets || 0), 0);
   const counted = rows.filter((a) => a.tickets != null).length;
   const elsewhere = rows.filter((a) => a.tickets == null && a.ticketsText).length;
-  const live = rows.filter((a) => a.status === "live" || a.status === "ticketing").length;
+  const running = rows.filter((a) => a.scheduling === "Scheduled");
+  const off = rows.length - running.length;
+  const live = running.filter((a) => a.status === "live" || a.status === "ticketing").length;
   const ticketing = rows.filter((a) => a.status === "ticketing").length;
   // Anything not published and not a later session still needs a page. Later
   // sessions are covered by session 1's booking and never get one of their own,
   // so counting them here would overstate the backlog.
-  const pending = rows.filter((a) => !["live", "ticketing", "later"].includes(a.status)).length;
+  const pending = running.filter((a) => !["live", "ticketing", "later"].includes(a.status)).length;
 
   const card = (cls, value, key, sub, action) => `
     <${action ? "button" : "div"} class="stat ${cls}" ${action ? `type="button" data-stat="${action}"` : ""}>
@@ -1258,7 +1281,9 @@ function renderStats(rows) {
     </${action ? "button" : "div"}>`;
 
   $("#stats").innerHTML = [
-    card("tone-primary", distinct, "Activities", `${rows.length} individual sessions`),
+    card("tone-primary", distinct, "Activities",
+      `${rows.length} individual sessions`
+      + (off ? `<br>${off} postponed or cancelled` : "")),
     card("tone-secondary", online, "Online", `${Math.round(online / (rows.length || 1) * 100)}% of sessions`, "online"),
     card("tone-tertiary", f2f, "Face-to-face", f2f ? `${new Set(rows.filter((a) => a.venue).map((a) => a.venue)).size} venues` : "&mdash;", "f2f"),
     card("", capacity.toLocaleString("en-GB"), "Ticket capacity",
@@ -1342,7 +1367,8 @@ function sorted(rows) {
 function rowCard(a) {
   const [, , d] = (a.date || "--,--,--").split("-");
   const cat = a.network ? `${a.network} Network` : a.brochure;
-  return `<button type="button" class="row st-${a.status}" data-id="${a.id}">
+  const off = a.scheduling && a.scheduling !== "Scheduled";
+  return `<button type="button" class="row st-${a.status} ${off ? "off-schedule" : ""}" data-id="${a.id}">
     <span class="date-cell">
       <span class="d num">${a.date ? Number(d) : "&mdash;"}</span>
       <span class="w">${esc((a.day || "TBC").slice(0, 3))}</span>
@@ -1363,6 +1389,7 @@ function rowCard(a) {
       </span>
     </span>
     <span class="row-side">
+      ${off ? `<span class="pill pill-${a.scheduling.toLowerCase()}">${esc(a.scheduling)}</span>` : ""}
       <span class="pill pill-${a.status}">${esc(STATUS_TEXT[a.status] || a.status)}</span>
       ${a.session ? `<span class="tickets">Session <b>${a.session} of ${a.parts}</b></span>` : ""}
     </span>
@@ -1382,6 +1409,7 @@ const COLUMNS = [
   { key: "pd", label: "PD category", cls: "t-dim", cell: (a) => a.pd },
   { key: "status", label: "Status", cls: "", cell: (a) => `<span class="pill pill-${a.status}">${esc(STATUS_TEXT[a.status] || a.status)}</span>` },
   { key: "workflows", label: "Workflows", cls: "t-dim", cell: (a) => a.workflows || "&mdash;" },
+  { key: "scheduling", label: "Scheduled", cls: "t-dim", cell: (a) => a.scheduling },
   { key: "scope", label: "Regional/local", cls: "t-dim", cell: (a) => a.scope },
   { key: "registration", label: "Registration", cls: "t-dim", cell: (a) => a.registration },
   { key: "processed", label: "Reports", cls: "t-dim",
@@ -1460,9 +1488,14 @@ function render() {
 
   const total = ACTIVITIES.length;
   const distinct = rows.filter((a) => a.counts).length;
-  $("#count").innerHTML = rows.length === total
-    ? `<strong>${total}</strong> sessions &middot; <strong>${distinct}</strong> distinct activities`
-    : `<strong>${rows.length}</strong> of ${total} sessions &middot; <strong>${distinct}</strong> distinct activities`;
+  const shown = rows.length === total
+    ? `<strong>${total}</strong> sessions`
+    : `<strong>${rows.length}</strong> of ${total} sessions`;
+  // Postponed and cancelled rows are not counted as activities, so a view made
+  // only of them would otherwise read "3 sessions - 0 distinct activities".
+  $("#count").innerHTML = (rows.length && !distinct)
+    ? `${shown} &middot; none currently running`
+    : `${shown} &middot; <strong>${distinct}</strong> distinct activities`;
   $("#qClear").hidden = !state.q;
   writeHash();
 }
@@ -1482,6 +1515,7 @@ function openPanel(id) {
   $("#panelTitle").textContent = a.name;
   $("#panelBody").innerHTML = `
     <div class="panel-pills">
+      ${a.scheduling && a.scheduling !== "Scheduled" ? `<span class="pill pill-${a.scheduling.toLowerCase()}">${esc(a.scheduling)}</span>` : ""}
       <span class="pill pill-${a.status}">${esc(STATUS_TEXT[a.status] || a.status)}</span>
       <span class="pill pill-type">${esc(a.type || "Activity")}</span>
       <span class="pill pill-cat">${esc(a.rp)}</span>
