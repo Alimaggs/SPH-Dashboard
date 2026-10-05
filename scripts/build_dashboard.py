@@ -277,6 +277,21 @@ def read_rows() -> tuple[list[dict], datetime]:
                 return None
             return values_sheet.cell(row=row[0].row, column=position + 1).value
 
+        def read_checkbox(row):
+            """'Processed for Reports', from the cached result or the formula.
+
+            Excel stores both a formula and its last-calculated result; openpyxl
+            writes only the formula, since it cannot calculate. So any
+            programmatic edit to the workbook leaves every formula cell with no
+            cached value until Excel next opens and saves it. Falling back to
+            the formula text keeps this column readable in between.
+            """
+            value = as_bool(cell_value(row, "Processed for Reports"))
+            if value is not None:
+                return value
+            target = cell(row, "Processed for Reports")
+            return as_bool(target.value if target else None)
+
         for excel_row in sheet.iter_rows(min_row=2):
             name_cell = cell(excel_row, "Event Name")
             name = clean(name_cell.value if name_cell else None)
@@ -361,7 +376,7 @@ def read_rows() -> tuple[list[dict], datetime]:
                 "scheduling": scheduling,
                 "scope": SCOPE_ALIASES.get(scope.lower(), scope),
                 "registration": REGISTRATION_ALIASES.get(registration.lower(), registration),
-                "processed": as_bool(cell_value(excel_row, "Processed for Reports")),
+                "processed": read_checkbox(excel_row),
                 "cpd": clean(cell(excel_row, "CPD Bundle for Survey").value),
                 "workflows": clean(cell(excel_row, "Workflows Configured").value),
                 "notes": clean(cell(excel_row, "Notes").value),
