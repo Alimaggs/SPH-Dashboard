@@ -34,22 +34,17 @@ OPEN
   Needed: dates, facilitators and descriptions for sessions 4-6, or
   confirmation that they are not running this year.
 
-[2026-10-02] Venues still to confirm (7 activities)
+[2026-10-02] Venues still to confirm (6 activities)
   These are live or scheduled with no venue recorded:
     23 Sep 2026  Autumn Outdoor Learning Morning for Childminders and Children
     16 Oct 2026  Bristol EDI Network Sessions - Inclusive Environments
-    12 Nov 2026  Somerset Baby Practitioner Network Meeting - November 2026
     27 Nov 2026  Bristol EDI Network Sessions - Inclusive Curriculum
     29 Jan 2027  Quality Interactions Toolkit Roadshow
      5 Feb 2027  Quality Interactions Toolkit Roadshow
     12 Feb 2027  Quality Interactions Toolkit Roadshow
   Needed: a venue for each, or "Online" where that is what is meant.
   The 16 Oct EDI session is the most pressing.
-
-[2026-10-02] Somerset Baby Practitioner Network Meeting - 12 Nov 2026
-  Location is blank rather than "TBC". The North Somerset meetings turned out
-  to be online; this may be the same.
-  Needed: confirmation of online or in person, so Location can be set.
+  (Was 7: the 12 Nov Somerset meeting was confirmed as online on 7 Oct.)
 
 [2026-10-02] Quality Interactions Toolkit Roadshows - tickets
   All three (29 Jan, 5 Feb, 12 Feb) are live on the website but have no
@@ -69,19 +64,21 @@ OPEN
   nothing on it reaches the site until it is moved into next year's list.
   Currently holding one activity: Somerset Baby Practitioner Network Meeting -
   October 2027 (Thursday 7 Oct 2027, 6:15-7:30 pm, online). It came through
-  with three others that are now live in RP2, RP3 and RP4.
+  with three others that are now in RP2, RP3 and RP4.
   Needed: when the 2027-2028 master list is set up, move this across. Its
   HubSpot tags were written to the RP1-27-28 pattern, which next year's list
   may well rename.
-
-[2026-10-07] Somerset Baby Practitioner Network Meeting - 12 Nov 2026
-  Mailing List Subscriptions is blank on this row, where all fifteen other
-  "Working with Babies" network rows carry "Working with Babies". The three
-  new 2027 meetings have been set to match the fifteen.
-  Needed: confirmation the Nov 2026 row should be brought into line.
 
 
 RESOLVED
 ========
 
-(nothing yet)
+[2026-10-07] Somerset Baby Practitioner Network Meeting - 12 Nov 2026 - location
+  Raised 2 Oct: Location was blank rather than "TBC".
+  Resolved: Location set to "Online" in the spreadsheet.
+
+[2026-10-07] Somerset Baby Practitioner Network Meeting - 12 Nov 2026 - mailing list
+  Raised 7 Oct: Mailing List Subscriptions was blank, unlike the other
+  "Working with Babies" network rows.
+  Resolved: set to "Working with Babies" in the spreadsheet. Presenter also
+  recorded in Notes (Louise Hannan, University Centre Somerset College Group).
