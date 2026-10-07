@@ -62,6 +62,24 @@ OPEN
   a comma.
   Needed: the correct venue name.
 
+[2026-10-07] "2027-2028 RP1" sheet - activities falling after 31 Aug 2027
+  RP4 closes on 31 Aug 2027, so anything later has no home in this workbook.
+  There is now a fifth sheet, "2027-2028 RP1", to park them on. The dashboard
+  build ignores every sheet outside the four current reporting periods, so
+  nothing on it reaches the site until it is moved into next year's list.
+  Currently holding one activity: Somerset Baby Practitioner Network Meeting -
+  October 2027 (Thursday 7 Oct 2027, 6:15-7:30 pm, online). It came through
+  with three others that are now live in RP2, RP3 and RP4.
+  Needed: when the 2027-2028 master list is set up, move this across. Its
+  HubSpot tags were written to the RP1-27-28 pattern, which next year's list
+  may well rename.
+
+[2026-10-07] Somerset Baby Practitioner Network Meeting - 12 Nov 2026
+  Mailing List Subscriptions is blank on this row, where all fifteen other
+  "Working with Babies" network rows carry "Working with Babies". The three
+  new 2027 meetings have been set to match the fifteen.
+  Needed: confirmation the Nov 2026 row should be brought into line.
+
 
 RESOLVED
 ========

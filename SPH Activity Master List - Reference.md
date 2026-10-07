@@ -6,7 +6,7 @@ Background and data dictionary for `2026-2027 SPH Activity Master List.xlsx`, th
 
 The Stronger Practice Hub runs CPD events, webinars and practitioner networks for Early Years settings across the Bristol & Beyond region. Every activity — one-off webinars, recurring network sessions, multi-part CPD programmes, face-to-face study days — is logged as one row in this workbook so the team can track what's running, tag it correctly for HubSpot (email marketing / list membership), and report on it by reporting period.
 
-The workbook has four sheets, one per reporting period:
+The workbook has four reporting-period sheets:
 
 | Sheet | Reporting Period | Date range |
 |---|---|---|
@@ -15,9 +15,11 @@ The workbook has four sheets, one per reporting period:
 | RP3 | RP3-26-27 | 1 Mar 2027 – 31 May 2027 |
 | RP4 | RP4-26-27 | 1 Jun 2027 – 31 Aug 2027 |
 
+A fifth sheet, **2027-2028 RP1**, parks activities that fall after RP4 closes on 31 Aug 2027 and so have no home in this year's list. It carries the same columns and is laid out the same way, but it is not a reporting period for this year: the dashboard build skips every sheet outside the four above, so nothing on it reaches the site. Move its rows into the 2027-2028 master list when that is set up.
+
 An activity is filed on the sheet matching the calendar date it actually runs on — a multi-part programme that spans two reporting periods (e.g. sessions in November and December) has its rows split across the two relevant sheets.
 
-Each sheet is a proper Excel Table (not just a formatted range), so it supports native sort/filter and auto-extends as rows are added. As of the last update (2 Oct 2026) there are **129 activity rows** across the four sheets (RP1: 33, RP2: 39, RP3: 37, RP4: 20). Counting each multi-part CPD programme once rather than per-session, that's **115 distinct activities/programmes**. These counts include postponed/cancelled rows — filter on Status (column V) to exclude them.
+Each sheet is a proper Excel Table (not just a formatted range), so it supports native sort/filter and auto-extends as rows are added. As of the last update (7 Oct 2026) there are **133 activity rows** across the four reporting-period sheets (RP1: 33, RP2: 40, RP3: 38, RP4: 22), plus 1 parked on 2027-2028 RP1. Counting each multi-part CPD programme once rather than per-session, that's **117 distinct activities/programmes**. These counts include postponed/cancelled rows — filter on Status (column V) to exclude them.
 
 ## 2. Column reference (A–V)
 

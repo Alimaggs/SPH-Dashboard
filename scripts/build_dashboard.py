@@ -262,6 +262,11 @@ def read_rows() -> tuple[list[dict], datetime]:
 
     for sheet in workbook.worksheets:
         period = sheet.title.strip().upper()
+        # Only this year's reporting periods belong on the dashboard. A sheet
+        # for a later year - "2027-2028 RP1" parks activities falling after
+        # RP4 closes on 31 Aug 2027 - is held out until PERIODS covers it.
+        if period not in PERIODS:
+            continue
         headers = [clean(c.value) for c in next(sheet.iter_rows(min_row=1, max_row=1))]
         index = {h: i for i, h in enumerate(headers)}
         values_sheet = computed[sheet.title]
