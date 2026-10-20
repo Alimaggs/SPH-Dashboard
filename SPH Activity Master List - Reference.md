@@ -19,7 +19,7 @@ A fifth sheet, **2027-2028 RP1**, parks activities that fall after RP4 closes on
 
 An activity is filed on the sheet matching the calendar date it actually runs on — a multi-part programme that spans two reporting periods (e.g. sessions in November and December) has its rows split across the two relevant sheets.
 
-Each sheet is a proper Excel Table (not just a formatted range), so it supports native sort/filter and auto-extends as rows are added. As of the last update (7 Oct 2026) there are **133 activity rows** across the four reporting-period sheets (RP1: 33, RP2: 40, RP3: 38, RP4: 22), plus 1 parked on 2027-2028 RP1. Counting each multi-part CPD programme once rather than per-session, that's **117 distinct activities/programmes**. These counts include postponed/cancelled rows — filter on Status (column V) to exclude them.
+Each sheet is a proper Excel Table (not just a formatted range), so it supports native sort/filter and auto-extends as rows are added. As of the last update (20 Oct 2026) there are **133 activity rows** across the four reporting-period sheets (RP1: 31, RP2: 39, RP3: 40, RP4: 23), plus 1 parked on 2027-2028 RP1. Counting each multi-part CPD programme once rather than per-session, that's **118 distinct activities/programmes**. These counts include postponed/cancelled rows — filter on Status (column V) to exclude them.
 
 ## 2. Column reference (A–V)
 
@@ -46,7 +46,7 @@ Each sheet is a proper Excel Table (not just a formatted range), so it supports 
 | S | Regional/Local | Dropdown | `"Regional"` (SPH-wide) or `"Local"` (one area only, e.g. Bristol or North Somerset). |
 | T | Registration | Dropdown | `"Website"` (booked via beyth.co.uk) or `"External"` (booked on a third-party platform, e.g. Eventbrite, iLearn, Bristol Early Years calendar). |
 | U | Processed for Reports | Boolean | `TRUE`/`FALSE` checkbox, default `FALSE`. Ticked manually once the event's data has been pulled into reporting. May be stored as `=FALSE()`/`=TRUE()` formulas — treat as booleans. |
-| V | Status | Dropdown | `"Scheduled"` / `"Postponed"` / `"Cancelled"`. Default `Scheduled`. Postponed/cancelled rows stay in the sheet (with a dated note in column P) rather than being deleted — **exclude them from activity counts and "upcoming" views**. |
+| V | Status | Dropdown | `"Scheduled"` / `"Postponed"` / `"Cancelled"`. Default `Scheduled`. Postponed/cancelled rows stay in the sheet (with a dated note in column P) rather than being deleted — **exclude them from activity counts and "upcoming" views**. When a postponed activity gets new dates, move the row rather than adding a new one: re-date it, refile it on the sheet for its new date, re-suffix its tags (H–L) to the new period, set Status back to `Scheduled`, and replace the postponement note with "Rescheduled from <original date>". |
 
 ## 3. HubSpot tagging system (columns H–L)
 

@@ -23,10 +23,16 @@ OPEN
   Needed: a replacement date, so column B and the Status column can be updated
   and the course page re-dated. Anyone already booked will need telling.
 
-[2026-10-02] Using Evidence to Strengthen Your Early Years Leadership
-  Sessions 1-3 (20 Oct, 10 Nov, 1 Dec) postponed on 2 Oct, new dates TBC.
-  Needed: replacement dates, so column B and the Status column can be updated
-  and the three course pages re-dated. Anyone already booked will need telling.
+[2026-10-20] Using Evidence to Strengthen Your Early Years Leadership - after the move
+  The programme now runs Fri 30 Apr, Tue 25 May and Tue 29 Jun 2027,
+  9:00 am-12:00 pm (was 20 Oct, 10 Nov, 1 Dec 2026). The spreadsheet rows have
+  moved to RP3 and RP4 and been re-tagged; see Resolved.
+  Needed, outside the spreadsheet:
+    - check the course page shows the new dates (it has moved to a "-2027"
+      URL, now in the spreadsheet)
+    - tell anyone already booked
+    - rebuild the HubSpot workflows on the RP3-26-27 tags, then set
+      Workflows Configured back to Yes on Session 1
 
 [2026-10-02] Bristol EDI Network Sessions - sessions 4, 5 and 6
   The notes on the three rows we have say "Session N of 6", but only sessions
@@ -72,6 +78,12 @@ OPEN
 
 RESOLVED
 ========
+
+[2026-10-20] Using Evidence to Strengthen Your Early Years Leadership - new dates
+  Raised 2 Oct: sessions 1-3 (20 Oct, 10 Nov, 1 Dec 2026) postponed, new dates TBC.
+  Resolved: new dates Fri 30 Apr, Tue 25 May, Tue 29 Jun 2027, 9:00 am-12:00 pm.
+  Sessions 1 and 2 moved from RP1 to RP3, Session 3 from RP2 to RP4; tags
+  re-suffixed to match, Status back to Scheduled, original dates kept in Notes.
 
 [2026-10-07] Somerset Baby Practitioner Network Meeting - 12 Nov 2026 - location
   Raised 2 Oct: Location was blank rather than "TBC".
