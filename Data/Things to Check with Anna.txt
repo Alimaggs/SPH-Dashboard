@@ -18,6 +18,13 @@ Referenced in section 9 of "SPH Activity Master List - Reference.md".
 OPEN
 ====
 
+[2026-10-27] Developing an Early Years Curriculum - 23 Oct 2026
+  Postponed: the presenter was unable to run it. Was Fri 23 Oct 2026, in RP1.
+  The 30 Apr 2027 repeat of this session is unaffected.
+  Needed: a replacement date, so the row can be re-dated (and moved to another
+  sheet if the date falls in another period) and the course page updated.
+  Anyone already booked will need telling.
+
 [2026-10-05] Childminder Network: Running a Sustainable Childminding Business
   Postponed on 5 Oct. Was 13 Oct 2026, 6:30-8:00 pm, online.
   Needed: a replacement date, so column B and the Status column can be updated
