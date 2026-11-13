@@ -47,22 +47,24 @@ OPEN
   Needed: dates, facilitators and descriptions for sessions 4-6, or
   confirmation that they are not running this year.
 
-[2026-10-02] Venues still to confirm (6 activities)
+[2026-10-02] Venues still to confirm (5 activities)
   These are live or scheduled with no venue recorded:
     23 Sep 2026  Autumn Outdoor Learning Morning for Childminders and Children
     16 Oct 2026  Bristol EDI Network Sessions - Inclusive Environments
     27 Nov 2026  Bristol EDI Network Sessions - Inclusive Curriculum
     29 Jan 2027  Quality Interactions Toolkit Roadshow
-     5 Feb 2027  Quality Interactions Toolkit Roadshow
     12 Feb 2027  Quality Interactions Toolkit Roadshow
   Needed: a venue for each, or "Online" where that is what is meant.
   The 16 Oct EDI session is the most pressing.
-  (Was 7: the 12 Nov Somerset meeting was confirmed as online on 7 Oct.)
+  (Was 7: the 12 Nov Somerset meeting was confirmed as online on 7 Oct, and
+  the 5 Feb roadshow as Taunton Rugby Club on 13 Nov.)
 
 [2026-10-02] Quality Interactions Toolkit Roadshows - tickets
-  All three (29 Jan, 5 Feb, 12 Feb) are live on the website but have no
-  tickets released — marked purple in column A.
-  Needed: venue first, then ticket numbers, then release.
+  29 Jan and 12 Feb are live on the website but have no tickets released —
+  marked purple in column A.
+  Needed: venue first, then ticket numbers and a time, then release.
+  (5 Feb is done: Taunton Rugby Club, 150 tickets, 9:30 am-4:30 pm, tickets
+  released 13 Nov.)
 
 [2026-10-02] Broadmoor Lane Orchard Park. Bath
   The venue on the October Outdoor Learning Morning (8 Oct 2026) reads
