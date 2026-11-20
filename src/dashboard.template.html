@@ -1133,7 +1133,7 @@ const FACETS = [
   { id: "rp", label: "Reporting period", get: (a) => [a.rp], order: ["RP1", "RP2", "RP3", "RP4"] },
   { id: "type", label: "Activity type", get: (a) => (a.type ? [a.type] : []) },
   { id: "format", label: "Format", get: (a) => [a.format] },
-  { id: "scope", label: "Regional or local", get: (a) => (a.scope ? [a.scope] : []), order: ["Regional", "Local"] },
+  { id: "scope", label: "Regional or local", get: (a) => (a.scope ? [a.scope] : []), order: ["Regional", "Local", "National"] },
   { id: "registration", label: "Registration", get: (a) => (a.registration ? [a.registration] : []) },
   { id: "scheduling", label: "Scheduled or postponed", order: ["Scheduled", "Postponed", "Cancelled"],
     get: (a) => (a.scheduling ? [a.scheduling] : []) },
@@ -1266,6 +1266,7 @@ function renderStats(rows) {
   const elsewhere = rows.filter((a) => a.tickets == null && a.ticketsText).length;
   const running = rows.filter((a) => a.scheduling === "Scheduled");
   const off = rows.length - running.length;
+  const national = running.filter((a) => a.scope === "National").length;
   const live = running.filter((a) => a.status === "live" || a.status === "ticketing").length;
   const ticketing = rows.filter((a) => a.status === "ticketing").length;
   // Anything not published and not a later session still needs a page. Later
@@ -1283,7 +1284,8 @@ function renderStats(rows) {
   $("#stats").innerHTML = [
     card("tone-primary", distinct, "Activities",
       `${rows.length} individual sessions`
-      + (off ? `<br>${off} postponed or cancelled` : "")),
+      + (off ? `<br>${off} postponed or cancelled` : "")
+      + (national ? `<br>${national} national, not counted` : "")),
     card("tone-secondary", online, "Online", `${Math.round(online / (rows.length || 1) * 100)}% of sessions`, "online"),
     card("tone-tertiary", f2f, "Face-to-face", f2f ? `${new Set(rows.filter((a) => a.venue).map((a) => a.venue)).size} venues` : "&mdash;", "f2f"),
     card("", capacity.toLocaleString("en-GB"), "Ticket capacity",
@@ -1384,7 +1386,7 @@ function rowCard(a) {
         <span class="pill pill-type">${esc(a.type || "Activity")}</span>
         ${cat ? `<span class="pill pill-cat">${esc(cat)}</span>` : ""}
         ${a.cpd === "Yes" ? `<span class="pill pill-cpd">CPD bundle</span>` : ""}
-        ${a.scope === "Local" ? `<span class="pill pill-local">Local</span>` : ""}
+        ${a.scope === "Local" || a.scope === "National" ? `<span class="pill pill-local">${esc(a.scope)}</span>` : ""}
         ${a.registration && a.registration !== "Website" ? `<span class="pill pill-ext">${esc(a.registration)}</span>` : ""}
       </span>
     </span>
@@ -1493,8 +1495,9 @@ function render() {
     : `<strong>${rows.length}</strong> of ${total} sessions`;
   // Postponed and cancelled rows are not counted as activities, so a view made
   // only of them would otherwise read "3 sessions - 0 distinct activities".
+  // National events are left out too, so a view of only those says why.
   $("#count").innerHTML = (rows.length && !distinct)
-    ? `${shown} &middot; none currently running`
+    ? `${shown} &middot; ${rows.every((a) => a.scope === "National") ? "national, not counted" : "none currently running"}`
     : `${shown} &middot; <strong>${distinct}</strong> distinct activities`;
   $("#qClear").hidden = !state.q;
   writeHash();

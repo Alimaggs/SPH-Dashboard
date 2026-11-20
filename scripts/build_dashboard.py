@@ -417,9 +417,12 @@ def read_rows() -> tuple[list[dict], datetime]:
         # A "distinct activity" is every row except sessions 2 and 3 of a
         # multi-part programme, which are covered by the session 1 booking.
         # Postponed and cancelled activities are not being run, so they are
-        # left out too, per the master list reference document.
+        # left out too, per the master list reference document. So are national
+        # events: a partner runs them for every hub and we only link through to
+        # their booking, so they are not the hub's own activities.
         row["counts"] = (not (row["session"] and row["session"] > 1)
-                         and row["scheduling"] == "Scheduled")
+                         and row["scheduling"] == "Scheduled"
+                         and row["scope"] != "National")
     return rows, saved
 
 

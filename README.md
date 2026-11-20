@@ -239,13 +239,16 @@ ticketing, no website link, venue/time to confirm). Option counts stay live as
 you filter. The month bar chart doubles as a month filter.
 
 Because nearly every activity is regional and booked through the website, only
-the exceptions are badged on the schedule cards: a **Local** pill, and a pill
+the exceptions are badged on the schedule cards: a **Local** or **National**
+pill, and a pill
 naming the booking platform when it is not the website.
 
 **Counting** — the header shows both numbers: individual sessions and distinct
 activities. Sessions 2 and 3 of a multi-part CPD programme are one booking, so
-they don't count as separate activities. "Count programmes once" at the bottom of
-the filter rail hides those rows entirely.
+they don't count as separate activities. Nor do **National** events, which a
+partner runs for every hub while we only link through to their booking.
+"Count programmes once" at the bottom of the filter rail hides those rows
+entirely.
 
 **Sharing a view** — filters are written into the URL, so a filtered view can be
 copied out of the address bar and sent to a colleague.
