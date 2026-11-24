@@ -64,9 +64,10 @@ OPEN
   marked purple in column A.
   Needed: venue first, then ticket numbers and a time, then release.
   Anna confirmed 150 tickets for both on 24 Nov. 12 Feb is now done:
-  Cheltenham Chase Hotel, 150 tickets, tickets released 24 Nov. Its time,
-  9:30 am-4:30 pm, was copied from 5 Feb rather than confirmed - check it
-  with Anna. 29 Jan still needs a venue and a time.
+  Cheltenham Chase Hotel, 150 tickets, 9:30 am-4:30 pm (Anna confirmed the
+  time on 24 Nov), tickets released 24 Nov. Lunch is provided at both
+  5 Feb and 12 Feb (noted on each row). 29 Jan still needs a venue and a
+  time, and confirmation that lunch is provided there too.
   (5 Feb is done: Taunton Rugby Club, 150 tickets, 9:30 am-4:30 pm, tickets
   released 13 Nov.)
 
